@@ -1,10 +1,11 @@
 import React from 'react';
 import Router from '../router';
 import CheckBox from 'expo-checkbox';
+import { useRoute } from '@react-navigation/native';
 import styles from '../styles/Stylesheet';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet} from 'react-native';
 
-export default function Login({ onSwitch, onLogin }) {
+export default function Login({ navigation  }) {
   return (
     <View style={styles.container}>
         <View style={styles.formBox}>
@@ -39,11 +40,14 @@ export default function Login({ onSwitch, onLogin }) {
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity style={styles.button} onPress={onLogin}>
-        <Text style={styles.buttonText}>INICIAR SESIÓN</Text>
-      </TouchableOpacity>
+    <TouchableOpacity
+      style={styles.button}
+      onPress={() => navigation.replace('Home')} // replace evita volver al login con "back"
+    >
+      <Text style={styles.buttonText}>INICIAR SESIÓN</Text>
+    </TouchableOpacity>
 
-      <TouchableOpacity onPress={onSwitch}>
+          <TouchableOpacity onPress={() => navigation.navigate('Register')}>
         <Text style={styles.registerText}>¿No tienes cuenta? <Text style={styles.link}>REGÍSTRATE</Text></Text>
       </TouchableOpacity>
     </View>

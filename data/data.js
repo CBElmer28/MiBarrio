@@ -1,0 +1,62 @@
+export const restaurants = [
+  {
+    id: 1,
+    name: 'Mc Donalds',
+    rating: 4.7,
+    type: 'Restaurante',
+    categories: ['Hamburguesa', 'Pollo'],
+    image: require('../assets/images/mcdonalds.jpg'),
+    deliveryCost: 'Gratis',
+    time: '20 min',
+  },
+  {
+    id: 2,
+    name: 'Burguer King',
+    rating: 4.3,
+    type: 'Restaurante',
+    categories: ['Hamburguesa'],
+    image: require('../assets/images/burgerking.jpg'),
+    deliveryCost: 'Gratis',
+    time: '25 min',
+  },
+  {
+    id: 3,
+    name: 'Starbucks',
+    rating: 4.0,
+    type: 'Cafetería',
+    categories: ['Café', 'Postres'],
+    image: require('../assets/images/starbucks.jpg'),
+    deliveryCost: 'S/ 5.00',
+    time: '15 min',
+  },
+];
+
+export const foods = [
+  {
+    id: 101,
+    name: 'Pizza Europea',
+    rating: 4.5,
+    type: 'Comida',
+    categories: ['Pizza'],
+    image: require('../assets/images/pizzaeuropea.jpg'),
+    price: 40,
+  },
+  {
+    id: 102,
+    name: 'Pizza Buffalo',
+    rating: 4.4,
+    type: 'Comida',
+    categories: ['Pizza'],
+    image: require('../assets/images/pizzabuffalo.jpg'),
+    price: 45,
+  },
+  {
+    id: 103,
+    name: 'Burger Bistro',
+    rating: 4.6,
+    type: 'Comida',
+    categories: ['Hamburguesa'],
+    image: require('../assets/images/burgerbistro.jpg'),
+    price: 35,
+  },
+];
