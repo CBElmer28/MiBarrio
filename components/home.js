@@ -1,61 +1,21 @@
 import React, { useState } from 'react';
 import styles from '../styles/HomeStyles';
+import { restaurants, foods } from '../data/data';
 import { View, Text, TextInput, ScrollView, TouchableOpacity, Image } from 'react-native';
 
-const allData = [
-  {
-    name: 'Mc Donalds',
-    rating: 4.7,
-    type: 'Restaurante',
-    categories: ['Hamburguesa', 'Pollo'],
-    image: require('../assets/images/mcdonalds.jpg'),
-  },
-  {
-    name: 'Burguer King',
-    rating: 4.3,
-    type: 'Restaurante',
-    categories: ['Hamburguesa'],
-    image: require('../assets/images/burgerking.jpg'),
-  },
-  {
-    name: 'Starbucks',
-    rating: 4.0,
-    type: 'Cafetería',
-    categories: ['Café', 'Postres'],
-    image: require('../assets/images/starbucks.jpg'),
-  },
-  {
-    name: 'Pizza Europea',
-    rating: 4.5,
-    type: 'Comida',
-    categories: ['Pizza'],
-    image: require('../assets/images/pizzaeuropea.jpg'),
-  },
-  {
-    name: 'Pizza Buffalo',
-    rating: 4.4,
-    type: 'Comida',
-    categories: ['Pizza'],
-    image: require('../assets/images/pizzabuffalo.jpg'),
-  },
-];
 
 export default function Home({navigation}) {
   const [query, setQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Todas');
 
   const categories = ['Todas', 'Hamburguesa', 'Pizza', 'Pollo', 'Café', 'Postres'];
-
-  const filtered = allData.filter(item => {
-    const matchesSearch = item.name.toLowerCase().includes(query.toLowerCase());
-    const matchesCategory =
-      selectedCategory === 'Todas' || item.categories.includes(selectedCategory);
-    return matchesSearch && matchesCategory;
-  });
-
-  const restaurantes = filtered.filter(item => item.type === 'Restaurante' || item.type === 'Cafetería');
-  const comidas = filtered.filter(item => item.type === 'Comida');
-
+  
+  const restaurantes = restaurants.filter(item =>
+      selectedCategory === 'Todas' || item.categories.includes(selectedCategory)
+    );
+  const comidas = foods.filter(item =>
+      selectedCategory === 'Todas' || item.categories.includes(selectedCategory)
+    );
   return (
     <View style={styles.container}>
       <Text style={styles.header}>ENTREGAR A: Lima Norte</Text>
