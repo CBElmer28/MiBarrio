@@ -35,10 +35,7 @@ export default function Router() {
         <Stack.Screen
           name="Category"
           component={CategoryScreen}
-          options={({ route }) => ({
-            title: route.params?.category || 'Categoría',
-          })}
-        />
+          options={{headerShown: false}} />
 
       </Stack.Navigator>
     </NavigationContainer>

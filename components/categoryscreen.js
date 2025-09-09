@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { View,Image, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { restaurants, foods } from '../data/data';
+import { masterCategories } from '../data/masterData';
 import categorystyles from '../styles/CategoryStyles';  
 import homestyles from '../styles/HomeStyles';
+import AnimatedDropdown from '../components/dropdown';
 
 export default function CategoryScreen() {
   const route = useRoute();
@@ -23,29 +25,11 @@ export default function CategoryScreen() {
   return (
     <View style={categorystyles.container}>
       {/* Header con dropdown */}
-      <TouchableOpacity
-        style={categorystyles.dropdownHeader}
-        onPress={() => setDropdownOpen(!dropdownOpen)}
-      >
-        <Text style={categorystyles.dropdownHeaderText}>{selectedCategory} ▼</Text>
-      </TouchableOpacity>
-
-      {dropdownOpen && (
-        <View style={categorystyles.dropdownList}>
-          {categories.map((cat, idx) => (
-            <TouchableOpacity
-              key={idx}
-              style={categorystyles.dropdownItem}
-              onPress={() => {
-                setSelectedCategory(cat);
-                setDropdownOpen(false);
-              }}
-            >
-              <Text style={categorystyles.dropdownItemText}>{cat}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      )}
+      <AnimatedDropdown
+  data={masterCategories}
+  selected={selectedCategory}
+  onSelect={(cat) => setSelectedCategory(cat)}
+/>
 
       <ScrollView>
         <Text style={homestyles.sectionTitle}>{selectedCategory} Populares</Text>
