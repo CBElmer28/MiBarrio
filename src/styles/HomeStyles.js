@@ -15,6 +15,15 @@ export default StyleSheet.create({
     fontWeight: 'bold',
     marginVertical: 10,
   },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 5,
+  },
+  menuButton: {
+    marginRight: 10,
+    padding: 4,
+  },
   searchInput: {
     backgroundColor: '#fff',
     padding: 12,
@@ -24,131 +33,108 @@ export default StyleSheet.create({
     marginBottom: 15,
   },
   filters: {
-    flexDirection: 'row',
-    marginBottom: 20,
+    marginVertical: 10,
+    paddingBottom: 10,
+    marginTop: -4,
   },
   filterButton: {
-    backgroundColor: '#eee',
-    paddingVertical: 8,
+    height: 36,
+    minWidth: 90,
     paddingHorizontal: 12,
-    borderRadius: 20,
-    marginRight: 10,
+    marginRight: 8,
+    borderRadius: 18,
+    backgroundColor: '#f5f5f5',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  filterButtonText: {
+    fontSize: 14,
+    color: '#333',
+    fontWeight: '500',
+  },
+  activeFilterButton: {
+    backgroundColor: '#FF6600',
+  },
+  activeFilterButtonText: {
+    color: '#fff',
   },
   sectionTitle: {
     fontSize: 16,
     fontWeight: '600',
     marginBottom: 10,
   },
-card: {
-  flexDirection: 'row',
-  backgroundColor: '#fff',
-  borderRadius: 10,
-  marginBottom: 15,
-  overflow: 'hidden',
-  shadowColor: '#000',
-  shadowOpacity: 0.1,
-  shadowOffset: { width: 0, height: 2 },
-  elevation: 3,
-},
-imageContainer: {
-  width: 90,
-  height: 90,
-  backgroundColor: '#e0e0e0', // gris placeholder
-  justifyContent: 'center',
-  alignItems: 'center',
-},
-cardImage: {
-  width: '100%',
-  height: '100%',
-  resizeMode: 'cover',
-},
-cardContent: {
-  flex: 1,
-  padding: 10,
-  justifyContent: 'center',
-},
+  cardBase: {
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 3,
+  },
   restaurantCard: {
-  backgroundColor: '#fff',
-  borderRadius: 12,
-  marginBottom: 20,
-  overflow: 'hidden',
-  shadowColor: '#000',
-  shadowOpacity: 0.1,
-  shadowOffset: { width: 0, height: 2 },
-  elevation: 3,
-},
-restaurantImage: {
-  width: '100%',
-  height: 180,
-  resizeMode: 'cover',
-},
-restaurantName: {
-  fontSize: 18,
-  fontWeight: 'bold',
-  marginTop: 8,
-  paddingHorizontal: 10,
-},
-categories: {
-  fontSize: 14,
-  color: '#666',
-  paddingHorizontal: 10,
-  marginBottom: 6,
-},
-infoRow: {
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  paddingHorizontal: 10,
-  paddingBottom: 10,
-},
-infoText: {
-  fontSize: 13,
-  color: '#444',
-},
-
-  details: {
+    borderRadius: 12,
+    marginBottom: 20,
+  },
+  restaurantImage: {
+    width: '100%',
+    height: 180,
+    resizeMode: 'cover',
+  },
+  restaurantName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginTop: 8,
+    paddingHorizontal: 10,
+  },
+  categories: {
+    fontSize: 14,
     color: '#666',
+    paddingHorizontal: 10,
+    marginBottom: 6,
+  },
+  infoRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 8,
     marginTop: 4,
   },
+  infoItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  icon: {
+    width: 16,
+    height: 16,
+    marginRight: 4,
+    resizeMode: 'contain',
+  },
+  infoText: {
+    fontSize: 13,
+    color: '#555',
+  },
   foodCard: {
-  width: 140,
-  marginRight: 15,
-  backgroundColor: '#fff',
-  borderRadius: 10,
-  overflow: 'hidden',
-  shadowColor: '#000',
-  shadowOpacity: 0.1,
-  shadowOffset: { width: 0, height: 2 },
-  elevation: 3,
-},
-foodImage: {
-  width: '100%',
-  height: 100,
-  resizeMode: 'cover',
-},
-
-foodContent: {
-  padding: 10,
-},
-
-foodName: {
-  padding: 8,
-  fontSize: 14,
-  fontWeight: 'bold',
-  textAlign: 'center',
-},
-
-foodDetails: {
-  color: '#666',
-  fontSize: 13,
-},
-headerRow: {
-  flexDirection: 'row',
-  alignItems: 'center',
-  marginBottom: 5,
-},
-menuButton: {
-  marginRight: 10,
-  padding: 4,
-},
-
+    width: 140,
+    marginRight: 15,
+  },
+  foodImage: {
+    width: '100%',
+    height: 100,
+    resizeMode: 'cover',
+  },
+  foodContent: {
+    padding: 10,
+  },
+  foodName: {
+    padding: 8,
+    fontSize: 14,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  foodDetails: {
+    color: '#666',
+    fontSize: 13,
+  },
 });

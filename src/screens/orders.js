@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList,Image } from 'react-native';
 
 export default function Orders({navigation}) {
       const handleClose = () => {
@@ -41,12 +41,15 @@ export default function Orders({navigation}) {
 
   return (
     <View style={styles.container}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 10 }}>
-          <TouchableOpacity onPress={handleClose} style={{ marginLeft: 10, padding: 4 }}>
-            <MaterialIcons name="arrow-back" size={28} color="#FF6600" />
-          </TouchableOpacity>
-          <Text style={{ fontSize: 18, fontWeight: 'bold', marginLeft: 10 }}>Menú</Text>
-        </View>
+                <View style={styles.headerRow}>
+  <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+    <Image
+      source={require('../../assets/icons/Back.png')}
+      style={styles.backIcon}
+    />
+  </TouchableOpacity>
+  <Text style={styles.headerTitle}>Pedidos</Text>
+</View>
       {/* Tabs */}
       <View style={styles.tabs}>
         <TouchableOpacity
@@ -146,4 +149,24 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '500',
   },
+  headerRow: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  paddingVertical: 10,
+},
+backButton: {
+  padding: 4,
+  marginRight: 8,
+},
+backIcon: {
+  width: 26,
+  height: 26,
+  tintColor: '#FF6600',
+  resizeMode: 'contain',
+},
+headerTitle: {
+  fontSize: 18,
+  fontWeight: 'bold',
+},
+
 });

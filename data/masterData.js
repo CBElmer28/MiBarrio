@@ -5,4 +5,5 @@ export const masterCategories = [
   { value: 'Pollo', label: 'Pollo' },
   { value: 'Café', label: 'Café' },
   { value: 'Postres', label: 'Postres' },
+  { value: 'Parrillas', label: 'Parrillas' },
 ];

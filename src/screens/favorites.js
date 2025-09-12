@@ -1,24 +1,28 @@
-import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
-import BackArrow from '../components/ui/backarrow';
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 
-export default function Favorites({navigation}) {
-      const handleClose = () => {
-    navigation.closeDrawer(); 
+export default function Favorites({ navigation }) {
+  const handleBack = () => {
+    navigation.goBack();
   };
 
   return (
     <View style={styles.container}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 10 }}>
-  <BackArrow color="#FF6600" size={28} style={{ marginLeft: 10 }} />
-  <Text style={{ fontSize: 18, fontWeight: 'bold', marginLeft: 10 }}>Favoritos</Text>
-</View>
+      {/* Header */}
+      <View style={styles.headerRow}>
+        <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+          <Image
+            source={require('../../assets/icons/Back.png')}
+            style={styles.backIcon}
+          />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Favoritos</Text>
+      </View>
 
-  <View style={styles.Header}></View>
-
-      <Text style={styles.text}>Aquí aparecerán tus comidas y resturantes favoritos </Text>
+      {/* Contenido */}
+      <Text style={styles.text}>
+        Aquí aparecerán tus comidas y restaurantes favoritos
+      </Text>
     </View>
   );
 }
@@ -26,12 +30,32 @@ export default function Favorites({navigation}) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: '#fff',
+    paddingHorizontal: 16,
+    paddingTop: 10,
+  },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 10,
+  },
+  backButton: {
+    padding: 4,
+    marginRight: 8,
+  },
+  backIcon: {
+    width: 26,
+    height: 26,
+    tintColor: '#FF6600', // 🔹 color naranja
+    resizeMode: 'contain',
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
   },
   text: {
     fontSize: 16,
     color: '#666',
+    marginTop: 20,
   },
 });

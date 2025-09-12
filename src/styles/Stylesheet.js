@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1a1f4c', // azul oscuro
+    backgroundColor: '#1a1f4c', 
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
   formBox: {
     width: '100%',
     maxWidth: 400,
-    backgroundColor: '#fff', // recuadro blanco
+    backgroundColor: '#fff', 
     borderRadius: 12,
     padding: 25,
     shadowColor: '#000',
@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 26,
     fontWeight: 'bold',
-    color: '#1a1f4c', // azul oscuro
+    color: '#1a1f4c', 
     marginBottom: 20,
     textAlign: 'center',
   },

@@ -11,14 +11,14 @@ export default function Register({ navigation }) {
         <Text style={styles.label}>NOMBRE</Text>
         <TextInput
           style={styles.input}
-          placeholder="John Doe"
+          placeholder="Nombre"
           placeholderTextColor="#aaa"
         />
 
         <Text style={styles.label}>CORREO ELECTRÓNICO</Text>
         <TextInput
           style={styles.input}
-          placeholder="example@gmail.com"
+          placeholder="ejemplo@gmail.com"
           placeholderTextColor="#aaa"
           keyboardType="email-address"
         />
@@ -31,7 +31,6 @@ export default function Register({ navigation }) {
             placeholderTextColor="#aaa"
             secureTextEntry
           />
-          {/* Aquí podrías agregar el ícono de ojo más adelante */}
         </View>
 
         <Text style={styles.label}>REPITA CONTRASEÑA</Text>

@@ -27,7 +27,6 @@ export default function Login({ navigation  }) {
           placeholderTextColor="#aaa"
           secureTextEntry
         />
-        {/* Aquí podrías agregar el ícono de ojo más adelante */}
       </View>
 
       <View style={styles.options}>
@@ -42,7 +41,7 @@ export default function Login({ navigation  }) {
 
     <TouchableOpacity
       style={styles.button}
-      onPress={() => navigation.replace('Main')} // replace evita volver al login con "back"
+      onPress={() => navigation.replace('Main')}
     >
       <Text style={styles.buttonText}>INICIAR SESIÓN</Text>
     </TouchableOpacity>
