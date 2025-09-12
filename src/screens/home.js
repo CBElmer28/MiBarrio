@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import styles from '../styles/HomeStyles';
-import { restaurants, foods } from '../data/data';
+import { restaurants, foods } from '../../data/data';
 import { View, Text, TextInput, ScrollView, TouchableOpacity, Image } from 'react-native';
-
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 export default function Home({navigation}) {
   const [query, setQuery] = useState('');
@@ -18,7 +18,14 @@ export default function Home({navigation}) {
     );
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>ENTREGAR A: Lima Norte</Text>
+      <View style={styles.headerRow}>
+        <TouchableOpacity onPress={() => navigation.navigate('Menu')} style={styles.menuButton}>
+          <MaterialIcons name="menu" size={28} color="#333" />
+        </TouchableOpacity>
+
+
+        <Text style={styles.header}>ENTREGAR A: Lima Norte</Text>
+      </View>
       <Text style={styles.greeting}>Hey Halal, Buenas Tardes!</Text>
 
       <TextInput

@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import Material from 'react-native-vector-icons/MaterialCommunityIcons';
 
-export default function AnimatedDropdown({ data, selected, onSelect }) {
+export default function AnimatedDropdown({ data, selected, onSelect, color = '#2F7EBF' }) {
   const animation = useRef(new Animated.Value(0)).current;
   const scale = useRef(new Animated.Value(0)).current;
   const [toggle, setToggle] = useState(false);
@@ -72,9 +72,8 @@ export default function AnimatedDropdown({ data, selected, onSelect }) {
 
   return (
     <View style={styles.dropdownWrapper}>
-      {/* Botón */}
       <TouchableOpacity
-        style={styles.button}
+        style={[styles.button, { borderColor: color }]}
         onPress={() => {
           setToggle(!toggle);
           Animated.timing(animation, {
@@ -84,19 +83,35 @@ export default function AnimatedDropdown({ data, selected, onSelect }) {
           }).start();
         }}
       >
-        <Text style={styles.buttonText}>{selected || 'Seleccionar categoría'}</Text>
+        <Text style={[styles.buttonText, { color }]}>{selected || 'Seleccionar categoría'}</Text>
         <Animated.View style={[styles.arrow, arrowStyle]}>
-          <Material name="chevron-right" size={20} color="#2F7EBF" />
+          <Material name="chevron-right" size={20} color={color} />
         </Animated.View>
       </TouchableOpacity>
 
-      {/* Lista flotante */}
       {toggle && (
-        <Animated.View style={[styles.dropdownList, listStyle]}>
+        <Animated.View style={[styles.dropdownList, { borderColor: color }, listStyle]}>
           <FlatList
             data={data}
             keyExtractor={(item) => item.value}
-            renderItem={renderItem}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                style={styles.item}
+                onPress={() => {
+                  onSelect(item.value);
+                  setToggle(false);
+                }}
+              >
+                <Text
+                  style={[
+                    styles.itemText,
+                    selected === item.value && { color, fontWeight: 'bold' },
+                  ]}
+                >
+                  {item.label}
+                </Text>
+              </TouchableOpacity>
+            )}
           />
         </Animated.View>
       )}

@@ -141,5 +141,14 @@ foodDetails: {
   color: '#666',
   fontSize: 13,
 },
+headerRow: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  marginBottom: 5,
+},
+menuButton: {
+  marginRight: 10,
+  padding: 4,
+},
 
 });

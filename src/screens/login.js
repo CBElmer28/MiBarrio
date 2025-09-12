@@ -1,5 +1,5 @@
 import React from 'react';
-import Router from '../router';
+import Router from '../../router';
 import CheckBox from 'expo-checkbox';
 import { useRoute } from '@react-navigation/native';
 import styles from '../styles/Stylesheet';
@@ -42,7 +42,7 @@ export default function Login({ navigation  }) {
 
     <TouchableOpacity
       style={styles.button}
-      onPress={() => navigation.replace('Home')} // replace evita volver al login con "back"
+      onPress={() => navigation.replace('Main')} // replace evita volver al login con "back"
     >
       <Text style={styles.buttonText}>INICIAR SESIÓN</Text>
     </TouchableOpacity>

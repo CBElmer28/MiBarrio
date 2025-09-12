@@ -25,4 +25,19 @@ dropdownItem: {
 dropdownItemText: {
   fontSize: 14,
 },
+headerRow: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  marginBottom: 10,
+  marginTop: 20,
+  paddingHorizontal: 10, // opcional, para que no pegue a los bordes
+  height: 48, // 🔹 altura uniforme para flecha y dropdown
+},
+backButton: {
+  justifyContent: 'center',
+  alignItems: 'center',
+  height: '100%', // ocupa todo el alto del headerRow
+  marginRight: 8,
+},
+
 }) 
