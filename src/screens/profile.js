@@ -7,8 +7,15 @@ import BackArrow from '../components/ui/backarrow';
 export default function Profile({ navigation }) {
 
   const menuItems = [
-    { icon: 'favorite', label: 'Favoritos', screen: 'Favorites' },
+    { icon: 'person', label: 'Información personal'},
+    { icon: 'map', label: 'Direcciones'},
     { icon: 'shopping-cart', label: 'Carrito', screen: 'Orders' },
+    { icon: 'favorite', label: 'Favoritos', screen: 'Favorites' },
+    { icon: 'doorbell', label: 'Notificaciones'},
+    { icon: 'credit-card', label: 'Metodos de pago'},
+    { icon: 'question-mark', label: 'FAQs'},
+    { icon: 'person', label: 'Reseñas de los usuarios'},
+    { icon: 'settings', label: 'Configuración'},
     { icon: 'logout', label: 'Cerrar sesión', action: () => navigation.replace('Login') },
   ];
 

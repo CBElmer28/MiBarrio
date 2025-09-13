@@ -23,7 +23,7 @@ export default function Orders({navigation}) {
     <View style={styles.orderCard}>
       <View style={styles.orderInfo}>
         <Text style={styles.vendor}>{item.vendor}</Text>
-        <Text style={styles.details}>${item.price.toFixed(2)} • {item.items} {item.items > 1 ? 'items' : 'item'}</Text>
+        <Text style={styles.details}>S/.{item.price.toFixed(2)} • {item.items} {item.items > 1 ? 'items' : 'item'}</Text>
         <Text style={styles.orderNo}>Orden #{item.orderNo}</Text>
       </View>
       {activeTab === 'ongoing' && (

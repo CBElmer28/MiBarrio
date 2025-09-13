@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
   backIcon: {
     width: 26,
     height: 26,
-    tintColor: '#FF6600', // 🔹 color naranja
+    tintColor: '#FF6600',
     resizeMode: 'contain',
   },
   headerTitle: {
