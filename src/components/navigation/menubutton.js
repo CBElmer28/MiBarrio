@@ -1,6 +1,6 @@
 import React from 'react';
 import { TouchableOpacity, StyleSheet } from 'react-native';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {MaterialIcons} from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 
 export default function MenuButton({ color = '#333', size = 28, style }) {

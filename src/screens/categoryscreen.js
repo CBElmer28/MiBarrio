@@ -6,7 +6,7 @@ import { masterCategories } from '../../data/masterData';
 import categorystyles from '../styles/CategoryStyles';
 import homestyles from '../styles/HomeStyles';
 import AnimatedDropdown from '../components/ui/dropdown';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {MaterialIcons} from '@expo/vector-icons';
 
 export default function CategoryScreen() {
   const route = useRoute();

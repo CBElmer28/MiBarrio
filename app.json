@@ -1,12 +1,12 @@
 {
   "expo": {
     "name": "MiBarrio",
-    "slug": "MiBarrio",
+    "slug": "mibarrio",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
@@ -21,15 +21,19 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.erixon1.MiBarrio"
+      "package": "com.cbelmer28.mibarrio"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "12c66379-c8cf-4b56-8b38-cd07bb829815"
+        "projectId": "a441c0e1-8ed7-4675-95c5-71209314e12f"
       }
-    }
+    },
+    "owner": "cbelmer28",
+    "plugins": [
+      "expo-font"
+    ]
   }
 }

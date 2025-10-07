@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styles from '../styles/HomeStyles';
 import { restaurants, foods } from '../../data/data';
 import { View, Text, TextInput, ScrollView, TouchableOpacity, Image } from 'react-native';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {MaterialIcons} from '@expo/vector-icons';
 
 export default function Home({ navigation }) {
   const [query, setQuery] = useState('');

@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
 } from 'react-native';
-import Material from 'react-native-vector-icons/MaterialCommunityIcons';
+import {Material} from '@expo/vector-icons';
 
 export default function AnimatedDropdown({ data, selected, onSelect, color = '#2F7EBF' }) {
   const animation = useRef(new Animated.Value(0)).current;
