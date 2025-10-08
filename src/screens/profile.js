@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
 import {MaterialIcons} from '@expo/vector-icons';
-import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 import BackArrow from '../components/ui/backarrow';
 
 export default function Profile({ navigation }) {
