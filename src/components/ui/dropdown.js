@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
 } from 'react-native';
-import {Material} from '@expo/vector-icons';
+import {MaterialIcons} from '@expo/vector-icons';
 
 export default function AnimatedDropdown({ data, selected, onSelect, color = '#2F7EBF' }) {
   const animation = useRef(new Animated.Value(0)).current;
@@ -85,7 +85,7 @@ export default function AnimatedDropdown({ data, selected, onSelect, color = '#2
       >
         <Text style={[styles.buttonText, { color }]}>{selected || 'Seleccionar categoría'}</Text>
         <Animated.View style={[styles.arrow, arrowStyle]}>
-          <Material name="chevron-right" size={20} color={color} />
+          <MaterialIcons name="chevron-right" size={20} color={color} />
         </Animated.View>
       </TouchableOpacity>
 
