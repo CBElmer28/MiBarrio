@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState,useContext } from 'react';
 import styles from '../styles/HomeStyles';
 import { restaurants, foods } from '../../data/data';
 import { View, Text, TextInput, ScrollView, TouchableOpacity, Image } from 'react-native';
 import {MaterialIcons} from '@expo/vector-icons';
+import { CartContext } from '../context/CartContext';
 
 export default function Home({ navigation }) {
+  const { items } = useContext(CartContext);
+const cartCount = items.reduce((s, i) => s + i.qty, 0);
   const [query, setQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Todas');
 
@@ -22,14 +25,34 @@ export default function Home({ navigation }) {
   return (
     <View style={styles.container}>
       {/* Sección de Header */}
-      <View style={styles.headerRow}>
+    <View style={[styles.headerRow, { justifyContent: 'space-between' }]}>
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         <TouchableOpacity onPress={() => navigation.navigate('Menu')} style={styles.menuButton}>
           <MaterialIcons name="menu" size={28} color="#333" />
         </TouchableOpacity>
-
-
         <Text style={styles.header}>ENTREGAR A: Lima Norte</Text>
       </View>
+
+      <TouchableOpacity onPress={() => navigation.navigate('CartScreen')} style={{ padding: 8 }}>
+        <MaterialIcons name="shopping-cart" size={26} color="#333" />
+        {cartCount > 0 && (
+          <View style={{
+            position: 'absolute',
+            right: 2,
+            top: -4,
+            backgroundColor: '#FF3B30',
+            borderRadius: 8,
+            minWidth: 16,
+            height: 16,
+            alignItems: 'center',
+            justifyContent: 'center',
+            paddingHorizontal: 3,
+          }}>
+            <Text style={{ color: '#fff', fontSize: 10, fontWeight: '700' }}>{cartCount}</Text>
+          </View>
+        )}
+      </TouchableOpacity>
+    </View>
       <Text style={styles.greeting}>Hola Elmer, Buenas Tardes!</Text>
 
       <TextInput

@@ -6,6 +6,12 @@ import Register from './src/screens/register';
 import CategoryScreen from './src/screens/categoryscreen';
 import MainTabs from './src/components/navigation/maintab';
 import AppNavigator from './src/components/navigation/appnavigator';
+import FoodDetails from './src/screens/fooddetails';
+import RestaurantDetails from './src/screens/restaurantdetails';
+import CartScreen from './src/screens/cart';
+import PaymentScreen from './src/screens/paymentscreen';
+import AddCardScreen from './src/screens/addcardscreen';
+import TrackingScreen from './src/screens/trackingscreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -31,6 +37,36 @@ export default function Router() {
         <Stack.Screen
           name="Category"
           component={CategoryScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="FoodDetails"
+          component={FoodDetails}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="RestaurantDetails"
+          component={RestaurantDetails}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="CartScreen"
+          component={CartScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="PaymentScreen"
+          component={PaymentScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="AddCardScreen"
+          component={AddCardScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="TrackingScreen"
+          component={TrackingScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

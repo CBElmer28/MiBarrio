@@ -51,19 +51,19 @@ export default function CategoryScreen() {
           <Text style={homestyles.sectionTitle}>{selectedCategory} Populares</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             {filteredFoods.map(food => (
-              <View key={food.id} style={[homestyles.cardBase, homestyles.foodCard]}>
+              <TouchableOpacity key={food.id} style={[homestyles.cardBase, homestyles.foodCard]} onPress={() => navigation.navigate('FoodDetails', { food })}>
                 <Image source={food.image} style={homestyles.foodImage} />
                 <View style={homestyles.foodContent}>
                   <Text style={homestyles.foodName}>{food.name}</Text>
                   <Text style={homestyles.foodDetails}>${food.price}</Text>
                 </View>
-              </View>
+              </TouchableOpacity>
             ))}
           </ScrollView>
 
           <Text style={homestyles.sectionTitle}>Restaurantes Disponibles</Text>
           {filteredRestaurants.map(rest => (
-            <View key={rest.id} style={[homestyles.cardBase, homestyles.restaurantCard]}>
+            <TouchableOpacity key={rest.id} style={[homestyles.cardBase, homestyles.restaurantCard]} onPress={() => navigation.navigate('RestaurantDetails', { rest })}>
               <Image source={rest.image} style={homestyles.restaurantImage} />
               <Text style={homestyles.restaurantName}>{rest.name}</Text>
               <Text style={homestyles.categories}>{rest.categories.join(' - ')}</Text>
@@ -92,10 +92,9 @@ export default function CategoryScreen() {
                   <Text style={categorystyles.infoText}>{rest.time}</Text>
                 </View>
               </View>
-            </View>
+            </TouchableOpacity>
           ))}
         </ScrollView>
-
       </View>
     </View>
   );
