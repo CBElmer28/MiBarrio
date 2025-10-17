@@ -22,8 +22,8 @@ const [comidas, setComidas] = useState([]);
     const fetchData = async () => {
       try {
         // Cambia la URL segun sea necesario
-        const resRest = await fetch('http://192.168.1.10:3000/api/restaurantes');
-        const resFood = await fetch('http://192.168.1.10:3000/api/platillos');
+        const resRest = await fetch('http://192.168.0.19:3000/api/restaurantes');
+        const resFood = await fetch('http://192.168.0.19:3000/api/platillos');
         
         const dataRest = await resRest.json();
         const dataFood = await resFood.json();

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import CheckBox from 'expo-checkbox';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRoute } from '@react-navigation/native';
 import styles from '../styles/Stylesheet';
 import { View, Text, TextInput, TouchableOpacity } from 'react-native';
@@ -9,20 +10,27 @@ export default function Login({ navigation }) {
   const [email, setEmail] = useState('');
   const [contraseña, setContraseña] = useState('');
   const [error, setError] = useState('');
+  const [recordarme, setRecordarme] = useState(false);
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post('http://192.168.1.10:3000/api/auth/login', {
+      const response = await axios.post('http://192.168.0.19:3000/api/auth/login', {
         email,
         contraseña
       });
 
       const { token, usuario } = response.data;
 
-      // Aquí puedes guardar el token en AsyncStorage si lo necesitas
-      // await AsyncStorage.setItem('token', token);
+        if (recordarme) {
+            await AsyncStorage.setItem('token', token);
+            await AsyncStorage.setItem('usuario', JSON.stringify(usuario));
+            await AsyncStorage.setItem('token_timestamp', Date.now().toString());
+        } else {
+            await AsyncStorage.removeItem('token');
+            await AsyncStorage.removeItem('usuario');
+        }
 
-      navigation.replace('Main'); // Redirige al home
+        navigation.replace('Main'); // Redirige al home
     } catch (err) {
       setError(err.response?.data?.error || 'Error al iniciar sesión');
     }
@@ -57,7 +65,7 @@ export default function Login({ navigation }) {
 
         <View style={styles.options}>
           <View style={styles.checkboxContainer}>
-            <CheckBox value={false} />
+              <CheckBox value={recordarme} onValueChange={setRecordarme} />
             <Text style={styles.checkboxLabel}>Recordarme</Text>
           </View>
           <TouchableOpacity>

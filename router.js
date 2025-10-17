@@ -12,13 +12,19 @@ import CartScreen from './src/screens/cart';
 import PaymentScreen from './src/screens/paymentscreen';
 import AddCardScreen from './src/screens/addcardscreen';
 import TrackingScreen from './src/screens/trackingscreen';
+import authloading from "./src/screens/authloading";
 
 const Stack = createNativeStackNavigator();
 
 export default function Router() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
+      <Stack.Navigator initialRouteName="AuthLoading">
+          <Stack.Screen
+              name="AuthLoading"
+              component={authloading}
+              options={{ headerShown: false }}
+          />
         <Stack.Screen
           name="Login"
           component={Login}

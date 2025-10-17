@@ -1,9 +1,20 @@
 import React, { useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
 import {MaterialIcons} from '@expo/vector-icons';
 import BackArrow from '../components/ui/backarrow';
 
 export default function Profile({ navigation }) {
+    const handleLogout = async () => {
+        try {
+            await AsyncStorage.removeItem('token');
+            await AsyncStorage.removeItem('usuario');
+            await AsyncStorage.removeItem('token_timestamp');
+            navigation.replace('Login');
+        } catch (error) {
+            console.error('Error al cerrar sesión:', error);
+        }
+    };
 
   const menuItems = [
     { icon: 'person', label: 'Información personal'},
@@ -15,7 +26,7 @@ export default function Profile({ navigation }) {
     { icon: 'question-mark', label: 'FAQs'},
     { icon: 'person', label: 'Reseñas de los usuarios'},
     { icon: 'settings', label: 'Configuración'},
-    { icon: 'logout', label: 'Cerrar sesión', action: () => navigation.replace('Login') },
+    { icon: 'logout', label: 'Cerrar sesión', action: handleLogout },
   ];
 
   return (
