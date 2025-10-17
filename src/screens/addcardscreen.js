@@ -50,22 +50,22 @@ export default function AddCardScreen() {
       {method === 'yape' || method === 'plin' ? (
         <>
           <Text style={styles.label}>Número de teléfono</Text>
-          <TextInput keyboardType="phone-pad" value={phone} onChangeText={setPhone} style={styles.input} placeholder="9XXXXXXXX" />
+          <TextInput keyboardType="phone-pad" value={phone} onChangeText={(text) => setPhone(text.slice(0, 9))} style={styles.input} placeholder="9XXXXXXXX" />
         </>
       ) : (
         <>
           <Text style={styles.label}>Nombre en la tarjeta</Text>
           <TextInput value={name} onChangeText={setName} style={styles.input} placeholder="Nombre completo" />
           <Text style={styles.label}>Número de tarjeta</Text>
-          <TextInput keyboardType="numeric" value={number} onChangeText={setNumber} style={styles.input} placeholder="1234 5678 9012 3456" />
+          <TextInput keyboardType="numeric" value={number} onChangeText={(text) => setNumber(text.slice(0, 16))} style={styles.input} placeholder="1234 5678 9012 3456" />
           <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
             <View style={{ flex: 1, marginRight: 8 }}>
               <Text style={styles.label}>Expiración (MM/AA)</Text>
-              <TextInput value={expiry} onChangeText={setExpiry} style={styles.input} placeholder="MM/AA" />
+              <TextInput value={expiry} onChangeText={(text) => setExpiry(text.slice(0, 4))} style={styles.input} placeholder="MM/AA" />
             </View>
             <View style={{ width: 100 }}>
               <Text style={styles.label}>CVC</Text>
-              <TextInput keyboardType="numeric" value={cvc} onChangeText={setCvc} style={styles.input} placeholder="123" />
+              <TextInput keyboardType="numeric" value={cvc} onChangeText={(text) => setCvc(text.slice(0, 3))} style={styles.input} placeholder="123" />
             </View>
           </View>
         </>
