@@ -80,6 +80,7 @@ export const foods = [
     categories: ['Pizza'],
     image: require('../assets/images/pizzaeuropea.jpg'),
     price: 40,
+    restaurantId: 4, // Pizza Hut
   },
   {
     id: 102,
@@ -89,6 +90,7 @@ export const foods = [
     categories: ['Pizza'],
     image: require('../assets/images/pizzabuffalo.jpg'),
     price: 45,
+    restaurantId: 4, // Pizza Hut
   },
   {
     id: 103,
@@ -98,6 +100,7 @@ export const foods = [
     categories: ['Hamburguesa'],
     image: require('../assets/images/burgerbistro.jpg'),
     price: 35,
+    restaurantId: 1, // Mc Donalds
   },
   {
     id: 104,
@@ -107,6 +110,7 @@ export const foods = [
     categories: ['Pollo'],
     image: require('../assets/images/pollocrispy.jpg'),
     price: 38,
+    restaurantId: 5, // KFC
   },
   {
     id: 105,
@@ -116,6 +120,7 @@ export const foods = [
     categories: ['Café'],
     image: require('../assets/images/cafelatte.jpg'),
     price: 15,
+    restaurantId: 3, // Starbucks
   },
   {
     id: 106,
@@ -125,6 +130,7 @@ export const foods = [
     categories: ['Postres'],
     image: require('../assets/images/dona.jpg'),
     price: 12,
+    restaurantId: 6, // Dunkin Donuts
   },
   {
     id: 107,
@@ -134,6 +140,7 @@ export const foods = [
     categories: ['Hamburguesa'],
     image: require('../assets/images/bbqcombo.jpg'),
     price: 48,
+    restaurantId: 2, // Burger King
   },
   {
     id: 108,
@@ -143,5 +150,66 @@ export const foods = [
     categories: ['Café'],
     image: require('../assets/images/mocha.jpg'),
     price: 16,
+    restaurantId: 3, // Starbucks
+  },
+  {
+    id: 109,
+    name: 'Big Mac',
+    rating: 4.8,
+    type: 'Comida',
+    categories: ['Hamburguesa'],
+    image: require('../assets/images/burgerbistro.jpg'), // Reutilizando imagen
+    price: 25,
+    restaurantId: 1, // Mc Donalds
+  },
+  {
+    id: 110,
+    name: 'McNuggets',
+    rating: 4.6,
+    type: 'Comida',
+    categories: ['Pollo'],
+    image: require('../assets/images/pollocrispy.jpg'), // Reutilizando imagen
+    price: 20,
+    restaurantId: 1, // Mc Donalds
+  },
+  {
+    id: 111,
+    name: 'Whopper',
+    rating: 4.7,
+    type: 'Comida',
+    categories: ['Hamburguesa'],
+    image: require('../assets/images/bbqcombo.jpg'), // Reutilizando imagen
+    price: 30,
+    restaurantId: 2, // Burger King
+  },
+  {
+    id: 112,
+    name: 'Bucket Familiar',
+    rating: 4.9,
+    type: 'Comida',
+    categories: ['Pollo'],
+    image: require('../assets/images/pollocrispy.jpg'), // Reutilizando imagen
+    price: 55,
+    restaurantId: 5, // KFC
+  },
+  {
+    id: 113,
+    name: 'Frappuccino',
+    rating: 4.5,
+    type: 'Bebida',
+    categories: ['Café'],
+    image: require('../assets/images/cafelatte.jpg'), // Reutilizando imagen
+    price: 18,
+    restaurantId: 3, // Starbucks
+  },
+  {
+    id: 114,
+    name: 'Parrilla Mixta',
+    rating: 4.9,
+    type: 'Comida',
+    categories: ['Parrillas'],
+    image: require('../assets/images/pollocrispy.jpg'), // Reutilizando imagen
+    price: 65,
+    restaurantId: 7, // Torito Grill
   },
 ];

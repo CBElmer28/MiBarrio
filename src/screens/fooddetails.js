@@ -12,6 +12,20 @@ export default function FoodDetails() {
   const { addToCart } = useContext(CartContext);
   const [qty, setQty] = useState(1);
 
+  // 🍔 Ingredientes de hamburguesa
+  const ingredientes = food.ingredients || [
+    "Pan de hamburguesa con sésamo",
+    "Carne de res 200g",
+    "Queso cheddar",
+    "Lechuga fresca",
+    "Tomate",
+    "Cebolla morada",
+    "Pepinillos",
+    "Salsa especial de la casa",
+    "Mayonesa",
+    "Ketchup"
+  ];
+
   const onAdd = () => {
     addToCart({
       id: food.id,
@@ -25,57 +39,215 @@ export default function FoodDetails() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={categorystyles.iconButton}>
-          <Image source={require('../../assets/icons/Back.png')} style={categorystyles.headerIcon} />
-        </TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+        <Image source={require('../../assets/icons/Back.png')} style={categorystyles.headerIcon} />
+      </TouchableOpacity>
 
       <Image source={food.image} style={styles.image} />
+      
       <Text style={styles.name}>{food.name}</Text>
       <Text style={styles.price}>Precio: ${food.price}</Text>
-      <Text style={styles.rating}>Rating: {food.rating?.toFixed(1)}</Text>
+      <Text style={styles.rating}>Rating: {food.rating?.toFixed(1)} ⭐</Text>
 
-      <Text style={styles.section}>Categorías:</Text>
-      {food.categories.map((cat, i) => (
-        <Text key={i} style={styles.ingredient}>• {cat}</Text>
-      ))}
+      <View style={styles.divider} />
 
-      <View style={styles.qtyRow}>
-        <TouchableOpacity onPress={() => setQty(q => Math.max(1, q - 1))} style={styles.qtyBtn}>
-          <Text style={styles.qtyBtnText}>-</Text>
-        </TouchableOpacity>
-        <Text style={styles.qtyText}>{qty}</Text>
-        <TouchableOpacity onPress={() => setQty(q => q + 1)} style={styles.qtyBtn}>
-          <Text style={styles.qtyBtnText}>+</Text>
-        </TouchableOpacity>
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Categorías</Text>
+        <View style={styles.itemsContainer}>
+          {food.categories?.map((cat, i) => (
+            <View key={i} style={styles.itemRow}>
+              <Text style={styles.bullet}>•</Text>
+              <Text style={styles.itemText}>{cat}</Text>
+            </View>
+          ))}
+        </View>
+      </View>
+
+      <View style={styles.divider} />
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Ingredientes</Text>
+        <View style={styles.itemsContainer}>
+          {ingredientes.map((ingredient, i) => (
+            <View key={i} style={styles.itemRow}>
+              <Text style={styles.bullet}>🍴</Text>
+              <Text style={styles.itemText}>{ingredient}</Text>
+            </View>
+          ))}
+        </View>
+      </View>
+
+      <View style={styles.divider} />
+
+      <View style={styles.qtySection}>
+        <Text style={styles.qtyLabel}>Cantidad:</Text>
+        <View style={styles.qtyRow}>
+          <TouchableOpacity onPress={() => setQty(q => Math.max(1, q - 1))} style={styles.qtyBtn}>
+            <Text style={styles.qtyBtnText}>−</Text>
+          </TouchableOpacity>
+          <Text style={styles.qtyText}>{qty}</Text>
+          <TouchableOpacity onPress={() => setQty(q => q + 1)} style={styles.qtyBtn}>
+            <Text style={styles.qtyBtnText}>+</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       <TouchableOpacity style={styles.button} onPress={onAdd}>
-        <Text style={styles.buttonText}>Agregar al carrito</Text>
+        <Text style={styles.buttonText}>🛒 Agregar al carrito</Text>
       </TouchableOpacity>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 20, backgroundColor: '#fff' },
-  image: { width: '100%', height: 200, borderRadius: 10, marginBottom: 20 },
-  name: { fontSize: 24, fontWeight: 'bold', marginBottom: 10 },
-  price: { fontSize: 18, marginBottom: 5 },
-  rating: { fontSize: 16, color: '#888', marginBottom: 15 },
-  section: { fontSize: 18, fontWeight: '600', marginTop: 10 },
-  ingredient: { fontSize: 16, marginLeft: 10, marginBottom: 3 },
-  qtyRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 16 },
-  qtyBtn: { backgroundColor: '#eee', padding: 10, borderRadius: 6, marginHorizontal: 20 },
-  qtyBtnText: { fontSize: 18 },
-  qtyText: { fontSize: 18, fontWeight: '600' },
+  container: { 
+    padding: 20, 
+    backgroundColor: '#F8F9FA',
+    paddingBottom: 40
+  },
+  backButton: { 
+    marginBottom: 15,
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  image: { 
+    width: '100%', 
+    height: 250, 
+    borderRadius: 15, 
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 8
+  },
+  name: { 
+    fontSize: 28, 
+    fontWeight: 'bold', 
+    marginBottom: 8,
+    color: '#1A1A1A'
+  },
+  price: { 
+    fontSize: 22, 
+    marginBottom: 5,
+    color: '#FF6600',
+    fontWeight: '700'
+  },
+  rating: { 
+    fontSize: 18, 
+    color: '#666', 
+    marginBottom: 10
+  },
+  divider: {
+    height: 1,
+    backgroundColor: '#E0E0E0',
+    marginVertical: 20
+  },
+  section: {
+    marginBottom: 10
+  },
+  sectionTitle: { 
+    fontSize: 20, 
+    fontWeight: '700', 
+    marginBottom: 12,
+    color: '#2C3E50',
+    letterSpacing: 0.5
+  },
+  itemsContainer: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3
+  },
+  itemRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 8,
+    paddingVertical: 2
+  },
+  bullet: {
+    fontSize: 18,
+    marginRight: 10,
+    color: '#FF6600',
+    lineHeight: 24
+  },
+  itemText: { 
+    fontSize: 16, 
+    color: '#4A4A4A',
+    flex: 1,
+    lineHeight: 24
+  },
+  qtySection: {
+    alignItems: 'center',
+    marginTop: 10
+  },
+  qtyLabel: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#2C3E50',
+    marginBottom: 12
+  },
+  qtyRow: { 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    justifyContent: 'center',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3
+  },
+  qtyBtn: { 
+    backgroundColor: '#FF6600', 
+    padding: 12,
+    borderRadius: 10, 
+    marginHorizontal: 20,
+    minWidth: 45,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#FF6600',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    elevation: 4
+  },
+  qtyBtnText: { 
+    fontSize: 22, 
+    fontWeight: 'bold',
+    color: '#FFFFFF'
+  },
+  qtyText: { 
+    fontSize: 24, 
+    fontWeight: '700', 
+    minWidth: 40, 
+    textAlign: 'center',
+    color: '#1A1A1A'
+  },
   button: {
     backgroundColor: '#FF6600',
-    padding: 12,
-    borderRadius: 8,
-    marginTop: 20,
+    padding: 16,
+    borderRadius: 12,
+    marginTop: 25,
     alignItems: 'center',
+    shadowColor: '#FF6600',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 5,
+    elevation: 6
   },
-  buttonText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
-  backButton: { marginBottom: 10 },
-  backText: { color: '#2F7EBF', fontSize: 16 },
+  buttonText: { 
+    color: '#FFFFFF', 
+    fontSize: 18, 
+    fontWeight: 'bold',
+    letterSpacing: 0.5
+  }
 });
