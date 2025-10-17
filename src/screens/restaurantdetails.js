@@ -5,10 +5,16 @@ import { foods } from '../../data/data';
 import homestyles from '../styles/HomeStyles';
 import categorystyles from '../styles/CategoryStyles';
 
+
 export default function RestaurantDetails() {
   const route = useRoute();
   const navigation = useNavigation();
   const { rest } = route.params;
+  const categories = rest.Categoria?.map(c => c.nombre) || [];
+
+const rating = parseFloat(rest.rating) || 0;
+const deliveryCost = parseFloat(rest.delivery_cost) || 0;
+const time = parseFloat(rest.tiempo_entrega) || 0;
 
   // Filtrar comidas por restaurante
   const restaurantFoods = foods.filter(food => food.restaurantId === rest.id);
@@ -20,7 +26,7 @@ export default function RestaurantDetails() {
     >
       <Image source={item.image} style={styles.foodImage} />
       <View style={styles.foodInfo}>
-        <Text style={styles.foodName}>{item.name}</Text>
+        <Text style={styles.foodName}>{item.nombre}</Text>
         <View style={styles.foodDetails}>
           <View style={styles.ratingContainer}>
             <Image 
@@ -43,22 +49,22 @@ export default function RestaurantDetails() {
           <Image source={require('../../assets/icons/Back.png')} style={categorystyles.headerIcon} />
         </TouchableOpacity>
 
-        <Image source={rest.image} style={styles.image} />
-        <Text style={styles.name}>{rest.name}</Text>
-        <Text style={styles.categories}>{rest.categories.join(' - ')}</Text>
+        <Image source={rest.imagen} style={styles.image} />
+        <Text style={styles.name}>{rest.nombre}</Text>
+        <Text style={styles.categories}>{categories.join(' - ')}</Text>
 
         <View style={styles.infoRow}>
           <View style={styles.infoItem}>
             <Image source={require('../../assets/icons/Star.png')} style={[homestyles.icon, { tintColor: '#FF6600' }]} />
-            <Text style={homestyles.infoText}>{rest.rating.toFixed(1)}</Text>
+            <Text style={homestyles.infoText}>{rating.toFixed(1)}</Text>
           </View>
           <View style={styles.infoItem}>
             <Image source={require('../../assets/icons/Car.png')} style={[homestyles.icon, { tintColor: '#FF6600' }]} />
-            <Text style={homestyles.infoText}>{rest.deliveryCost}</Text>
+            <Text style={homestyles.infoText}>{deliveryCost.toFixed(2)}</Text>
           </View>
           <View style={styles.infoItem}>
             <Image source={require('../../assets/icons/Watch.png')} style={[homestyles.icon, { tintColor: '#FF6600' }]} />
-            <Text style={homestyles.infoText}>{rest.time}</Text>
+            <Text style={homestyles.infoText}>{time}</Text>
           </View>
         </View>
 

@@ -1,27 +1,69 @@
-import React, { useState,useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import styles from '../styles/HomeStyles';
-import { restaurants, foods } from '../../data/data';
-import { View, Text, TextInput, ScrollView, TouchableOpacity, Image } from 'react-native';
-import {MaterialIcons} from '@expo/vector-icons';
+import { View, Text, TextInput, ScrollView, TouchableOpacity } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 import { CartContext } from '../context/CartContext';
+import FoodCard from '../components/elements/foodcard';
+import RestaurantCard from '../components/elements/restaurantcard';
 
 export default function Home({ navigation }) {
   const { items } = useContext(CartContext);
-const cartCount = items.reduce((s, i) => s + i.qty, 0);
+  const cartCount = items.reduce((s, i) => s + i.qty, 0);
+
   const [query, setQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Todas');
+  const [restaurantes, setRestaurantes] = useState([]);
+  const [comidas, setComidas] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const categories = ['Todas', 'Hamburguesa', 'Pizza', 'Pollo', 'Café', 'Postres'];
 
-  const restaurantes = restaurants.filter(item =>
-    (selectedCategory === 'Todas' || item.categories.includes(selectedCategory)) &&
-    item.name.toLowerCase().includes(query.toLowerCase())
+  //Sacar datos del backend
+    useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Cambia la URL segun sea necesario
+        const resRest = await fetch('http://192.168.1.10:3000/api/restaurantes');
+        const resFood = await fetch('http://192.168.1.10:3000/api/platillos');
+        
+        const dataRest = await resRest.json();
+        const dataFood = await resFood.json();
+
+        setRestaurantes(dataRest);
+        setComidas(dataFood);
+      } catch (error) {
+        console.error('Error al cargar datos:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  //Conseguir filtrados
+  const restaurantesFiltrados = restaurantes.filter(item =>
+    (selectedCategory === 'Todas' ||
+      item.Categoria?.some(cat => cat.nombre === selectedCategory)) &&
+    item.nombre.toLowerCase().includes(query.toLowerCase())
   );
 
-  const comidas = foods.filter(item =>
-    (selectedCategory === 'Todas' || item.categories.includes(selectedCategory)) &&
-    item.name.toLowerCase().includes(query.toLowerCase())
+  const comidasFiltradas = comidas.filter(item =>
+    (selectedCategory === 'Todas' ||
+      item.Categoria?.some(cat => cat.nombre === selectedCategory)) &&
+    item.nombre.toLowerCase().includes(query.toLowerCase())
   );
+
+  //Cargando
+    if (loading) {
+    return (
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <Text>Cargando datos...</Text>
+      </View>
+    );
+  }
+
+
   return (
     <View style={styles.container}>
       {/* Sección de Header */}
@@ -93,49 +135,35 @@ const cartCount = items.reduce((s, i) => s + i.qty, 0);
 
       <ScrollView>
         {/* Sección de Restaurantes */}
-        {restaurantes.length > 0 && (
-          <>
-            <Text style={styles.sectionTitle}>Restaurantes Disponibles</Text>
-            {restaurantes.map((item, idx) => (
-              <View key={idx} style={[styles.cardBase, styles.restaurantCard]}>
-                <Image source={item.image} style={styles.restaurantImage} />
-                <Text style={styles.restaurantName}>{item.name}</Text>
-                <Text style={styles.categories}>{item.categories.join(' - ')}</Text>
-                <View style={styles.infoRow}>
-                  <View style={styles.infoItem}>
-                    <Image source={require('../../assets/icons/Star.png')} style={[styles.icon, { tintColor: '#FF6600' }]} />
-                    <Text style={styles.infoText}>{item.rating.toFixed(1)}</Text>
-                  </View>
+        {restaurantesFiltrados.length > 0 && (
+  <>
+    <Text style={styles.sectionTitle}>Restaurantes Disponibles</Text>
+    {restaurantesFiltrados.map((rest) => (
+      <RestaurantCard
+        key={rest.id}
+        restaurant={rest}
+        onPress={() => navigation.navigate('RestaurantDetails', { rest })}
+      />
+    ))}
+  </>
+)}
 
-                  <View style={styles.infoItem}>
-                    <Image source={require('../../assets/icons/Car.png')} style={[styles.icon, { tintColor: '#FF6600' }]} />
-                    <Text style={styles.infoText}>{item.deliveryCost}</Text>
-                  </View>
-
-                  <View style={styles.infoItem}>
-                    <Image source={require('../../assets/icons/Watch.png')} style={[styles.icon, { tintColor: '#FF6600' }]} />
-                    <Text style={styles.infoText}>{item.time}</Text>
-                  </View>
-                </View>
-              </View>
-            ))}
-          </>
-        )}
 
         {/* Sección de Comidas */}
-        {comidas.length > 0 && (
-          <>
-            <Text style={styles.sectionTitle}>Comida Rápida Popular</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              {comidas.map((item, idx) => (
-                <View key={idx} style={[styles.cardBase, styles.foodCard]}>
-                  <Image source={item.image} style={styles.foodImage} />
-                  <Text style={styles.foodName}>{item.name}</Text>
-                </View>
-              ))}
-            </ScrollView>
-          </>
-        )}
+        {comidasFiltradas.length > 0 && (
+  <>
+    <Text style={styles.sectionTitle}>Comida Rápida Popular</Text>
+    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 10 }}>
+      {comidasFiltradas.map((food) => (
+        <FoodCard
+          key={food.id}
+          food={food}
+          onPress={() => navigation.navigate('FoodDetails', { food })}
+        />
+      ))}
+    </ScrollView>
+  </>
+)}
       </ScrollView>
     </View>
   );

@@ -1,34 +1,71 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { View, Image, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import { restaurants, foods } from '../../data/data';
 import { masterCategories } from '../../data/masterData';
 import categorystyles from '../styles/CategoryStyles';
 import homestyles from '../styles/HomeStyles';
 import AnimatedDropdown from '../components/ui/dropdown';
-import {MaterialIcons} from '@expo/vector-icons';
+import FoodCard from '../components/elements/foodcard';
+import RestaurantCard from '../components/elements/restaurantcard';
 
 export default function CategoryScreen() {
   const route = useRoute();
   const navigation = useNavigation();
   const [selectedCategory, setSelectedCategory] = useState(route.params?.category || 'Todas');
+  const [loading, setLoading] = useState(true);
+  const [restaurantes, setRestaurantes] = useState([]);
+const [comidas, setComidas] = useState([]);
 
-  const filteredFoods = foods.filter(item =>
-    selectedCategory === 'Todas' || item.categories.includes(selectedCategory)
+
+  //Sacar datos del backend
+    useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Cambia la URL segun sea necesario
+        const resRest = await fetch('http://192.168.1.10:3000/api/restaurantes');
+        const resFood = await fetch('http://192.168.1.10:3000/api/platillos');
+        
+        const dataRest = await resRest.json();
+        const dataFood = await resFood.json();
+
+        setRestaurantes(dataRest);
+        setComidas(dataFood);
+      } catch (error) {
+        console.error('Error al cargar datos:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return <Text>Cargando...</Text>;
+  }
+
+  // 🔹 Filtrar por categoría seleccionada
+  const restaurantesFiltrados = restaurantes.filter(item =>
+    selectedCategory === 'Todas' ||
+    item.Categoria?.some(cat => cat.nombre === selectedCategory)
   );
 
-  const filteredRestaurants = restaurants.filter(item =>
-    selectedCategory === 'Todas' || item.categories.includes(selectedCategory)
+  const comidasFiltradas = comidas.filter(item =>
+    selectedCategory === 'Todas' ||
+    item.Categoria?.some(cat => cat.nombre === selectedCategory)
   );
+
 
   return (
     <View style={{ flex: 1, backgroundColor: '#fff' }}>
+      {/* Encabezado */}
       <View style={categorystyles.headerContainer}>
-        {/* 🔙 Flecha */}
+        {/* 🔙 Flecha atrás */}
         <TouchableOpacity onPress={() => navigation.goBack()} style={categorystyles.iconButton}>
           <Image source={require('../../assets/icons/Back.png')} style={categorystyles.headerIcon} />
         </TouchableOpacity>
 
+        {/* 🔽 Dropdown de categorías */}
         <AnimatedDropdown
           data={masterCategories}
           selected={selectedCategory}
@@ -36,6 +73,7 @@ export default function CategoryScreen() {
           color="#FF6600"
         />
 
+        {/* 🔍 Botones de acción */}
         <TouchableOpacity style={categorystyles.iconButton}>
           <Image source={require('../../assets/icons/Search.png')} style={categorystyles.headerIcon} />
         </TouchableOpacity>
@@ -44,55 +82,30 @@ export default function CategoryScreen() {
           <Image source={require('../../assets/icons/Filter.png')} style={categorystyles.headerIcon} />
         </TouchableOpacity>
       </View>
-      <View style={categorystyles.container}>
 
-        {/*Header */}
+      {/* Contenido principal */}
+      <View style={categorystyles.container}>
         <ScrollView contentContainerStyle={{ paddingBottom: 60 }}>
+          {/* 🍔 Comidas */}
           <Text style={homestyles.sectionTitle}>{selectedCategory} Populares</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            {filteredFoods.map(food => (
-              <TouchableOpacity key={food.id} style={[homestyles.cardBase, homestyles.foodCard]} onPress={() => navigation.navigate('FoodDetails', { food })}>
-                <Image source={food.image} style={homestyles.foodImage} />
-                <View style={homestyles.foodContent}>
-                  <Text style={homestyles.foodName}>{food.name}</Text>
-                  <Text style={homestyles.foodDetails}>${food.price}</Text>
-                </View>
-              </TouchableOpacity>
+            {comidasFiltradas.map(food => (
+              <FoodCard
+                key={food.id}
+                food={food}
+                onPress={() => navigation.navigate('FoodDetails', { food })}
+              />
             ))}
           </ScrollView>
 
+          {/* 🍴 Restaurantes */}
           <Text style={homestyles.sectionTitle}>Restaurantes Disponibles</Text>
-          {filteredRestaurants.map(rest => (
-            <TouchableOpacity key={rest.id} style={[homestyles.cardBase, homestyles.restaurantCard]} onPress={() => navigation.navigate('RestaurantDetails', { rest })}>
-              <Image source={rest.image} style={homestyles.restaurantImage} />
-              <Text style={homestyles.restaurantName}>{rest.name}</Text>
-              <Text style={homestyles.categories}>{rest.categories.join(' - ')}</Text>
-              <View style={categorystyles.infoRow}>
-                <View style={categorystyles.infoItem}>
-                  <Image
-                    source={require('../../assets/icons/Star.png')}
-                    style={[categorystyles.icon, { tintColor: '#FF6600' }]}
-                  />
-                  <Text style={categorystyles.infoText}>{rest.rating.toFixed(1)}</Text>
-                </View>
-
-                <View style={categorystyles.infoItem}>
-                  <Image
-                    source={require('../../assets/icons/Car.png')}
-                    style={[categorystyles.icon, { tintColor: '#FF6600' }]}
-                  />
-                  <Text style={categorystyles.infoText}>{rest.deliveryCost}</Text>
-                </View>
-
-                <View style={categorystyles.infoItem}>
-                  <Image
-                    source={require('../../assets/icons/Watch.png')}
-                    style={[categorystyles.icon, { tintColor: '#FF6600' }]}
-                  />
-                  <Text style={categorystyles.infoText}>{rest.time}</Text>
-                </View>
-              </View>
-            </TouchableOpacity>
+          {restaurantesFiltrados.map(rest => (
+            <RestaurantCard
+              key={rest.id}
+              restaurant={rest}
+              onPress={() => navigation.navigate('RestaurantDetails', { rest })}
+            />
           ))}
         </ScrollView>
       </View>

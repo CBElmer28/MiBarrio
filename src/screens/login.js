@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios'; // 👈 Asegúrate de tener axios instalado
+import axios from 'axios';
 import CheckBox from 'expo-checkbox';
 import { useRoute } from '@react-navigation/native';
 import styles from '../styles/Stylesheet';
@@ -12,7 +12,7 @@ export default function Login({ navigation }) {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post('http://192.168.0.19:3000/api/auth/login', {
+      const response = await axios.post('http://192.168.1.10:3000/api/auth/login', {
         email,
         contraseña
       });

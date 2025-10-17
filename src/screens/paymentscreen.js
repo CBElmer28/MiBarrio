@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert, Image } from 'react-native';
 import { CartContext } from '../context/CartContext';
 import { useNavigation } from '@react-navigation/native';
-import PaymentSuccess from '../components/paymentsuccess';
+import PaymentSuccess from '../components/elements/paymentsuccess';
 
 const METHODS = [
     {
