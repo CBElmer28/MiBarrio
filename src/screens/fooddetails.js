@@ -43,25 +43,25 @@ export default function FoodDetails() {
         <Image source={require('../../assets/icons/Back.png')} style={categorystyles.headerIcon} />
       </TouchableOpacity>
 
-      <Image source={food.image} style={styles.image} />
+      <Image source={food.imagen} style={styles.image} />
       
-      <Text style={styles.name}>{food.name}</Text>
-      <Text style={styles.price}>Precio: ${food.price}</Text>
-      <Text style={styles.rating}>Rating: {food.rating?.toFixed(1)} ⭐</Text>
+      <Text style={styles.name}>{food.nombre}</Text>
+      <Text style={styles.price}>Precio: ${food.precio}</Text>
+      <Text style={styles.rating}>Rating: {Number(food.rating)?.toFixed(1) || 'N/A'} ⭐</Text>
 
       <View style={styles.divider} />
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Categorías</Text>
-        <View style={styles.itemsContainer}>
-          {food.categories?.map((cat, i) => (
-            <View key={i} style={styles.itemRow}>
-              <Text style={styles.bullet}>•</Text>
-              <Text style={styles.itemText}>{cat}</Text>
-            </View>
-          ))}
-        </View>
+  <Text style={styles.sectionTitle}>Categoria</Text>
+  <View style={styles.itemsContainer}>
+    {(food.Categoria || []).map((cat, i) => (
+      <View key={i} style={styles.itemRow}>
+        <Text style={styles.bullet}>•</Text>
+        <Text style={styles.itemText}>{cat.nombre}</Text>
       </View>
+    ))}
+  </View>
+</View>
 
       <View style={styles.divider} />
 
