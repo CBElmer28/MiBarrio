@@ -29,10 +29,10 @@ export default function FoodDetails() {
   const onAdd = () => {
     addToCart({
       id: food.id,
-      name: food.name,
-      price: food.price,
-      image: food.image,
-      restId: food.restaurantId || null
+      name: food.nombre,
+      price: parseFloat(food.precio),
+      image: { uri: food.imagen },
+      restaurant: food.restaurante?.nombre || null,
     }, qty);
     navigation.navigate('CartScreen');
   };
@@ -43,7 +43,7 @@ export default function FoodDetails() {
         <Image source={require('../../assets/icons/Back.png')} style={categorystyles.headerIcon} />
       </TouchableOpacity>
 
-      <Image source={food.imagen} style={styles.image} />
+      <Image source={{ uri: food.imagen }} style={styles.image} />
       
       <Text style={styles.name}>{food.nombre}</Text>
       <Text style={styles.price}>Precio: ${food.precio}</Text>

@@ -5,6 +5,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { CartContext } from '../context/CartContext';
 import FoodCard from '../components/elements/foodcard';
 import RestaurantCard from '../components/elements/restaurantcard';
+import { API_URL } from "../config";
 
 export default function Home({ navigation }) {
   const { items } = useContext(CartContext);
@@ -22,9 +23,10 @@ export default function Home({ navigation }) {
     useEffect(() => {
     const fetchData = async () => {
       try {
+        console.log("API_URL:", API_URL);
         // Cambia la URL segun sea necesario
-        const resRest = await fetch('http://192.168.0.19:3000/api/restaurantes');
-        const resFood = await fetch('http://192.168.0.19:3000/api/platillos');
+        const resRest = await fetch(`${API_URL}/restaurantes`);
+        const resFood = await fetch(`${API_URL}/platillos`);
         
         const dataRest = await resRest.json();
         const dataFood = await resFood.json();

@@ -11,7 +11,7 @@ export default function RestaurantCard({ restaurant, onPress }) {
       onPress={onPress}
       activeOpacity={0.8}
     >
-      <Image source={restaurant.imagen} style={styles.restaurantImage} />
+      <Image source={{uri: restaurant.imagen}} style={styles.restaurantImage} />
       <Text style={styles.restaurantName}>{restaurant.nombre}</Text>
       <Text style={styles.categories}>
         {categories?.join(' - ')}

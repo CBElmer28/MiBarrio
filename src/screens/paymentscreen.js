@@ -4,6 +4,7 @@ import { CartContext } from '../context/CartContext';
 import { useNavigation } from '@react-navigation/native';
 import PaymentSuccess from '../components/elements/paymentsuccess';
 
+
 const METHODS = [
     {
         id: 'yape',

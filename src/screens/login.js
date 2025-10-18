@@ -5,8 +5,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRoute } from '@react-navigation/native';
 import styles from '../styles/Stylesheet';
 import { View, Text, TextInput, TouchableOpacity } from 'react-native';
+import { API_URL } from "../config";
 
 export default function Login({ navigation }) {
+  console.log("API_URL:", API_URL);
+
   const [email, setEmail] = useState('');
   const [contraseña, setContraseña] = useState('');
   const [error, setError] = useState('');
@@ -14,7 +17,7 @@ export default function Login({ navigation }) {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post('http://192.168.0.19:3000/api/auth/login', {
+      const response = await axios.post(`${API_URL}/auth/login`, {
         email,
         contraseña
       });

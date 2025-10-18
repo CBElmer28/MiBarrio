@@ -49,7 +49,7 @@ const time = parseFloat(rest.tiempo_entrega) || 0;
           <Image source={require('../../assets/icons/Back.png')} style={categorystyles.headerIcon} />
         </TouchableOpacity>
 
-        <Image source={rest.imagen} style={styles.image} />
+        <Image source={{uri: rest.imagen}} style={styles.image} />
         <Text style={styles.name}>{rest.nombre}</Text>
         <Text style={styles.categories}>{categories.join(' - ')}</Text>
 

@@ -1,11 +1,36 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useState,useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const CartContext = createContext();
+
 
 export function CartProvider({ children }) {
   const [items, setItems] = useState([]); // { id, name, price, image, qty, restId, restName }
   const [address, setAddress] = useState('Lima Norte');
   const [cards, setCards] = useState([]); // métodos/vínculos guardados: { id, method, label, data }
+
+  useEffect(() => {
+  AsyncStorage.setItem('cart', JSON.stringify(items));
+}, [items]);
+
+useEffect(() => {
+  AsyncStorage.getItem('cart').then(saved => {
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved).map(it => ({
+          ...it,
+          price: parseFloat(it.price) || 0,
+          qty: Number(it.qty) || 1,
+        }));
+        setItems(parsed);
+      } catch (e) {
+        console.warn('Error cargando carrito:', e);
+      }
+    }
+  });
+}, []);
+
+
 
   const addToCart = (product, qty = 1) => {
     setItems(prev => {
@@ -26,7 +51,12 @@ export function CartProvider({ children }) {
   const removeItem = (id) => setItems(prev => prev.filter(i => i.id !== id));
   const clearCart = () => setItems([]);
 
-  const subtotal = items.reduce((s, it) => s + it.price * it.qty, 0);
+  const subtotal = items.reduce((s, it) => {
+  const price = parseFloat(it.price) || 0;
+  const qty = Number(it.qty) || 0;
+  return s + price * qty;
+}, 0);
+
 
   // Cards management
   const addCard = (card) => {

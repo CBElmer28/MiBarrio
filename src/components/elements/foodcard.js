@@ -5,7 +5,7 @@ import styles from '../../styles/HomeStyles';
 export default function FoodCard({ food, onPress }) {
   return (
     <View style={[styles.cardBase, styles.foodCard]}>
-      <Image source={food.imagen} style={styles.foodImage} />
+      <Image source={{ uri: food.imagen }} style={styles.foodImage} />
 
       <View style={styles.foodContent}>
         {/* Nombre */}
