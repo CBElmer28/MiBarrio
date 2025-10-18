@@ -3,7 +3,8 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import styles from '../styles/Stylesheet';
-import Constants from 'expo-constants';
+
+import { API_URL } from "../config";
 
 export default function Register({ navigation }) {
     const [nombre, setNombre] = useState('');
@@ -11,8 +12,6 @@ export default function Register({ navigation }) {
     const [contraseña, setContraseña] = useState('');
     const [repetirContraseña, setRepetirContraseña] = useState('');
     const [error, setError] = useState('');
-    
-const API_URL = Constants.expoConfig.extra.API_URL;
 
     const handleRegister = async () => {
         if (!nombre || !email || !contraseña || !repetirContraseña) {
@@ -26,7 +25,7 @@ const API_URL = Constants.expoConfig.extra.API_URL;
         }
 
         try {
-            const response = await axios.post(`${API_URL}/auth/registro`, {
+            const response = await axios.post(`${API_URL}/auth/register`, {
                 nombre,
                 email,
                 contraseña,

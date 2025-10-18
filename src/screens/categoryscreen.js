@@ -60,12 +60,12 @@ const [comidas, setComidas] = useState([]);
     <View style={{ flex: 1, backgroundColor: '#fff' }}>
       {/* Encabezado */}
       <View style={categorystyles.headerContainer}>
-        {/* 🔙 Flecha atrás */}
+        {/* Flecha atrás */}
         <TouchableOpacity onPress={() => navigation.goBack()} style={categorystyles.iconButton}>
           <Image source={require('../../assets/icons/Back.png')} style={categorystyles.headerIcon} />
         </TouchableOpacity>
 
-        {/* 🔽 Dropdown de categorías */}
+        {/* Dropdown de categorías */}
         <AnimatedDropdown
           data={masterCategories}
           selected={selectedCategory}
@@ -73,7 +73,7 @@ const [comidas, setComidas] = useState([]);
           color="#FF6600"
         />
 
-        {/* 🔍 Botones de acción */}
+        {/* Botones de acción */}
         <TouchableOpacity style={categorystyles.iconButton}>
           <Image source={require('../../assets/icons/Search.png')} style={categorystyles.headerIcon} />
         </TouchableOpacity>
@@ -86,7 +86,7 @@ const [comidas, setComidas] = useState([]);
       {/* Contenido principal */}
       <View style={categorystyles.container}>
         <ScrollView contentContainerStyle={{ paddingBottom: 60 }}>
-          {/* 🍔 Comidas */}
+          {/* Comidas */}
           <Text style={homestyles.sectionTitle}>{selectedCategory} Populares</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             {comidasFiltradas.map(food => (
@@ -98,7 +98,7 @@ const [comidas, setComidas] = useState([]);
             ))}
           </ScrollView>
 
-          {/* 🍴 Restaurantes */}
+          {/* Restaurantes */}
           <Text style={homestyles.sectionTitle}>Restaurantes Disponibles</Text>
           {restaurantesFiltrados.map(rest => (
             <RestaurantCard
