@@ -24,13 +24,13 @@ export default function Login({ navigation }) {
 
       const { token, usuario } = response.data;
 
+      await AsyncStorage.setItem('usuario', JSON.stringify(usuario));
         if (recordarme) {
             await AsyncStorage.setItem('token', token);
-            await AsyncStorage.setItem('usuario', JSON.stringify(usuario));
             await AsyncStorage.setItem('token_timestamp', Date.now().toString());
         } else {
             await AsyncStorage.removeItem('token');
-            await AsyncStorage.removeItem('usuario');
+            await AsyncStorage.removeItem('token_timestamp');
         }
 
         navigation.replace('Main'); // Redirige al home

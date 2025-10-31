@@ -1,30 +1,70 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import { API_URL } from '../config';
 
 export default function Favorites({ navigation }) {
-  const handleBack = () => {
-    navigation.goBack();
-  };
+    const [favoritos, setFavoritos] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-  return (
-    <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.headerRow}>
-        <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-          <Image
-            source={require('../../assets/icons/Back.png')}
-            style={styles.backIcon}
-          />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Favoritos</Text>
-      </View>
+    const handleBack = () => {
+        navigation.goBack();
+    };
 
-      {/* Contenido */}
-      <Text style={styles.text}>
-        Aquí aparecerán tus comidas y restaurantes favoritos
-      </Text>
-    </View>
-  );
+    useEffect(() => {
+        const fetchFavoritos = async () => {
+            try {
+                const usuario = await AsyncStorage.getItem('usuario');
+                const cliente_id = JSON.parse(usuario)?.id;
+
+                if (cliente_id) {
+                    const response = await axios.get(`${API_URL}/favoritos/${cliente_id}`);
+                    setFavoritos(response.data);
+                }
+            } catch (error) {
+                console.error('Error al cargar favoritos:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchFavoritos();
+    }, []);
+
+    return (
+        <View style={styles.container}>
+            {/* Header */}
+            <View style={styles.headerRow}>
+                <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+                    <Image
+                        source={require('../../assets/icons/Back.png')}
+                        style={styles.backIcon}
+                    />
+                </TouchableOpacity>
+                <Text style={styles.headerTitle}>Favoritos</Text>
+            </View>
+
+            {/* Contenido */}
+            {loading ? (
+                <Text style={styles.text}>Cargando favoritos...</Text>
+            ) : favoritos.length === 0 ? (
+                <Text style={styles.text}>Aquí aparecerán tus comidas y restaurantes favoritos</Text>
+            ) : (
+                <ScrollView style={{ marginTop: 10 }}>
+                    {favoritos.map((item) => (
+                        <View key={item.id} style={{ marginBottom: 20 }}>
+                            <Text style={{ fontSize: 16, fontWeight: 'bold' }}>{item.platillo?.nombre}</Text>
+                            <Text style={{ fontSize: 14, color: '#666' }}>{item.platillo?.precio} soles</Text>
+                            <Text style={{ fontSize: 12, color: '#999' }}>
+                                Desde: {new Date(item.fecha).toLocaleDateString()}
+                            </Text>
+                        </View>
+                    ))}
+                </ScrollView>
+            )}
+        </View>
+    );
 }
 
 const styles = StyleSheet.create({
