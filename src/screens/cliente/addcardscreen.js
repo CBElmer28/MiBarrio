@@ -1,8 +1,8 @@
 import React, { useState, useContext } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ScrollView, Image } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import { CartContext } from '../context/CartContext';
-import categorystyles from '../styles/CategoryStyles';
+import { CartContext } from '../../context/CartContext';
+import categorystyles from '../../styles/CategoryStyles';
 
 export default function AddCardScreen() {
   const route = useRoute();
@@ -42,7 +42,7 @@ export default function AddCardScreen() {
     <ScrollView contentContainerStyle={styles.page}>
       <View style={categorystyles.headerContainer}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={categorystyles.iconButton}>
-          <Image source={require('../../assets/icons/Back.png')} style={categorystyles.headerIcon} />
+          <Image source={require('../../../assets/icons/Back.png')} style={categorystyles.headerIcon} />
         </TouchableOpacity>
       </View>
 

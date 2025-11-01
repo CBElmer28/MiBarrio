@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
-import styles from '../styles/HomeStyles';
+import styles from '../../styles/HomeStyles';
 import { View, Text, TextInput, ScrollView, TouchableOpacity } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { CartContext } from '../context/CartContext';
-import FoodCard from '../components/elements/foodcard';
-import RestaurantCard from '../components/elements/restaurantcard';
-import { API_URL } from "../config";
+import { CartContext } from '../../context/CartContext';
+import FoodCard from '../../components/elements/foodcard';
+import RestaurantCard from '../../components/elements/restaurantcard';
+import { API_URL } from "../../config";
 
 export default function Home({ navigation }) {
   const { items } = useContext(CartContext);

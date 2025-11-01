@@ -1,8 +1,8 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Profile from '../../screens/profile';
-import Favorites from '../../screens/favorites';
-import Orders from '../../screens/orders';
+import Profile from '../../screens/cliente/profile';
+import Favorites from '../../screens/cliente/favorites';
+import Orders from '../../screens/cliente/orders';
 
 const Stack = createNativeStackNavigator();
 

@@ -1,8 +1,8 @@
 import React, { useState, useContext } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert, Image } from 'react-native';
-import { CartContext } from '../context/CartContext';
+import { CartContext } from '../../context/CartContext';
 import { useNavigation } from '@react-navigation/native';
-import PaymentSuccess from '../components/elements/paymentsuccess';
+import PaymentSuccess from '../../components/elements/paymentsuccess';
 
 
 const METHODS = [
@@ -10,22 +10,22 @@ const METHODS = [
         id: 'yape',
         label: 'Yape',
         // Se usa require para cargar la imagen local desde la carpeta assets
-        icon: require('../../assets/icons/Yape-logo.png'),
+        icon: require('../../../assets/icons/Yape-logo.png'),
     },
     {
         id: 'visa',
         label: 'Visa',
-        icon: require('../../assets/icons/Visa-logo.png'),
+        icon: require('../../../assets/icons/Visa-logo.png'),
     },
     {
         id: 'mastercard',
         label: 'Mastercard',
-        icon: require('../../assets/icons/Mastercard-logo.png'),
+        icon: require('../../../assets/icons/Mastercard-logo.png'),
     },
     {
         id: 'paypal',
         label: 'PayPal',
-        icon: require('../../assets/icons/Paypal-logo.png'),
+        icon: require('../../../assets/icons/Paypal-logo.png'),
     },
 ];
 

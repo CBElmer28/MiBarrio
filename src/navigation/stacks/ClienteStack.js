@@ -1,16 +1,17 @@
+// src/components/navigation/stacks/ClienteStack.js
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Home from '../../screens/home';
-import MenuStack from '../stacks/MenuStack';
-import FoodDetails from '../../screens/fooddetails'
-import RestaurantDetails from '../../screens/restaurantdetails';
-import CartScreen from '../../screens/cart';
-import PaymentScreen from '../../screens/paymentscreen';
-import AddCardScreen from '../../screens/addcardscreen';
+import Home from '../../screens/cliente/home';
+import MenuStack from './MenuStack';
+import FoodDetails from '../../screens/cliente/fooddetails';
+import RestaurantDetails from '../../screens/cliente/restaurantdetails';
+import CartScreen from '../../screens/cliente/cart';
+import PaymentScreen from '../../screens/cliente/paymentscreen';
+import AddCardScreen from '../../screens/cliente/addcardscreen';
 
 const Stack = createNativeStackNavigator();
 
-export default function AppNavigator() {
+export default function ClienteStack() {
   return (
     <Stack.Navigator
       screenOptions={{

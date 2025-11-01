@@ -3,9 +3,9 @@ import axios from 'axios';
 import CheckBox from 'expo-checkbox';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRoute } from '@react-navigation/native';
-import styles from '../styles/Stylesheet';
+import styles from '../../styles/Stylesheet';
 import { View, Text, TextInput, TouchableOpacity } from 'react-native';
-import { API_URL } from "../config";
+import { API_URL } from "../../config";
 
 export default function Login({ navigation }) {
   console.log("API_URL:", API_URL);

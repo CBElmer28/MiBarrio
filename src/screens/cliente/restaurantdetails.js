@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, FlatList } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import { foods } from '../../data/data';
-import homestyles from '../styles/HomeStyles';
-import categorystyles from '../styles/CategoryStyles';
+import { foods } from '../../../data/data';
+import homestyles from '../../styles/HomeStyles';
+import categorystyles from '../../styles/CategoryStyles';
 
 
 export default function RestaurantDetails() {
@@ -30,7 +30,7 @@ const time = parseFloat(rest.tiempo_entrega) || 0;
         <View style={styles.foodDetails}>
           <View style={styles.ratingContainer}>
             <Image 
-              source={require('../../assets/icons/Star.png')} 
+              source={require('../../../assets/icons/Star.png')} 
               style={[styles.smallIcon, { tintColor: '#FFD700' }]} 
             />
             <Text style={styles.ratingText}>{item.rating.toFixed(1)}</Text>
@@ -46,7 +46,7 @@ const time = parseFloat(rest.tiempo_entrega) || 0;
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={categorystyles.iconButton}>
-          <Image source={require('../../assets/icons/Back.png')} style={categorystyles.headerIcon} />
+          <Image source={require('../../../assets/icons/Back.png')} style={categorystyles.headerIcon} />
         </TouchableOpacity>
 
         <Image source={{uri: rest.imagen}} style={styles.image} />
@@ -55,15 +55,15 @@ const time = parseFloat(rest.tiempo_entrega) || 0;
 
         <View style={styles.infoRow}>
           <View style={styles.infoItem}>
-            <Image source={require('../../assets/icons/Star.png')} style={[homestyles.icon, { tintColor: '#FF6600' }]} />
+            <Image source={require('../../../assets/icons/Star.png')} style={[homestyles.icon, { tintColor: '#FF6600' }]} />
             <Text style={homestyles.infoText}>{rating.toFixed(1)}</Text>
           </View>
           <View style={styles.infoItem}>
-            <Image source={require('../../assets/icons/Car.png')} style={[homestyles.icon, { tintColor: '#FF6600' }]} />
+            <Image source={require('../../../assets/icons/Car.png')} style={[homestyles.icon, { tintColor: '#FF6600' }]} />
             <Text style={homestyles.infoText}>{deliveryCost.toFixed(2)}</Text>
           </View>
           <View style={styles.infoItem}>
-            <Image source={require('../../assets/icons/Watch.png')} style={[homestyles.icon, { tintColor: '#FF6600' }]} />
+            <Image source={require('../../../assets/icons/Watch.png')} style={[homestyles.icon, { tintColor: '#FF6600' }]} />
             <Text style={homestyles.infoText}>{time}</Text>
           </View>
         </View>
@@ -86,7 +86,7 @@ const time = parseFloat(rest.tiempo_entrega) || 0;
                   <View style={styles.foodDetails}>
                     <View style={styles.ratingContainer}>
                       <Image 
-                        source={require('../../assets/icons/Star.png')} 
+                        source={require('../../../assets/icons/Star.png')} 
                         style={[styles.smallIcon, { tintColor: '#FFD700' }]} 
                       />
                       <Text style={styles.ratingText}>{item.rating.toFixed(1)}</Text>

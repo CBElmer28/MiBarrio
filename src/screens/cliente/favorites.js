@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { API_URL } from '../config';
+import { API_URL } from '../../config';
 
 export default function Favorites({ navigation }) {
     const [favoritos, setFavoritos] = useState([]);

@@ -2,10 +2,10 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialIcons } from '@expo/vector-icons';
 
-import Home from '../../screens/home';
-import Favorites from '../../screens/favorites';
-import Orders from '../../screens/orders';
-import Profile from '../../screens/profile';
+import Home from '../screens/cliente/home';
+import Favorites from '../screens/cliente/favorites';
+import Orders from '../screens/cliente/orders';
+import Profile from '../screens/cliente/profile';
 
 const Tab = createBottomTabNavigator();
 

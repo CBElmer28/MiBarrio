@@ -11,9 +11,9 @@ import {
   Alert,
 } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import MapWebView from '../components/mapwebview';
-import categorystyles from '../styles/CategoryStyles';
-import homestyles from '../styles/HomeStyles';
+import MapWebView from '../../components/mapwebview';
+import categorystyles from '../../styles/CategoryStyles';
+import homestyles from '../../styles/HomeStyles';
 
 const { height } = Dimensions.get('window');
 
@@ -73,7 +73,7 @@ export default function TrackingScreen() {
     <View style={styles.container}>
       <View style={categorystyles.headerContainer}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={categorystyles.iconButton}>
-          <Image source={require('../../assets/icons/Back.png')} style={categorystyles.headerIcon} />
+          <Image source={require('../../../assets/icons/Back.png')} style={categorystyles.headerIcon} />
         </TouchableOpacity>
       </View>
 

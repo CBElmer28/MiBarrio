@@ -1,18 +1,18 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Login from './src/screens/login';
-import Register from './src/screens/register';
-import CategoryScreen from './src/screens/categoryscreen';
-import MainTabs from './src/components/navigation/maintab';
-import AppNavigator from './src/components/navigation/appnavigator';
-import FoodDetails from './src/screens/fooddetails';
-import RestaurantDetails from './src/screens/restaurantdetails';
-import CartScreen from './src/screens/cart';
-import PaymentScreen from './src/screens/paymentscreen';
-import AddCardScreen from './src/screens/addcardscreen';
-import TrackingScreen from './src/screens/trackingscreen';
-import authloading from "./src/screens/authloading";
+import Login from './src/screens/auth/login';
+import Register from './src/screens/auth/register';
+import CategoryScreen from './src/screens/cliente/categoryscreen';
+import MainTabs from './src/navigation/ChefTab';
+import AppNavigator from './src/navigation/appnavigator';
+import FoodDetails from './src/screens/cliente/fooddetails';
+import RestaurantDetails from './src/screens/cliente/restaurantdetails';
+import CartScreen from './src/screens/cliente/cart';
+import PaymentScreen from './src/screens/cliente/paymentscreen';
+import AddCardScreen from './src/screens/cliente/addcardscreen';
+import TrackingScreen from './src/screens/cliente/trackingscreen';
+import authloading from "./src/screens/auth/authloading";
 
 const Stack = createNativeStackNavigator();
 

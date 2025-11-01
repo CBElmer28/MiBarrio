@@ -10,9 +10,9 @@ import {
     Alert,
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { CartContext } from '../context/CartContext';
-import homestyles from '../styles/HomeStyles';
-import categorystyles from '../styles/CategoryStyles';
+import { CartContext } from '../../context/CartContext';
+import homestyles from '../../styles/HomeStyles';
+import categorystyles from '../../styles/CategoryStyles';
 
 export default function CartScreen() {
     const route = useRoute();

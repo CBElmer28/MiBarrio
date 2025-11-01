@@ -2,10 +2,8 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { View, Text, TextInput, TouchableOpacity } from 'react-native';
-import styles from '../styles/Stylesheet';
-
-import { API_URL } from "../config";
-
+import styles from '../../styles/Stylesheet';
+import { API_URL } from "../../config";
 export default function Register({ navigation }) {
     const [nombre, setNombre] = useState('');
     const [email, setEmail] = useState('');

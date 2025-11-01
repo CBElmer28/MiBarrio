@@ -1,13 +1,13 @@
 import React, { useState,useEffect } from 'react';
 import { View, Image, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import { masterCategories } from '../../data/masterData';
-import categorystyles from '../styles/CategoryStyles';
-import homestyles from '../styles/HomeStyles';
-import AnimatedDropdown from '../components/ui/dropdown';
-import FoodCard from '../components/elements/foodcard';
-import RestaurantCard from '../components/elements/restaurantcard';
-import { API_URL } from "../config";
+import { masterCategories } from '../../../data/masterData';
+import categorystyles from '../../styles/CategoryStyles';
+import homestyles from '../../styles/HomeStyles';
+import AnimatedDropdown from '../../components/ui/dropdown';
+import FoodCard from '../../components/elements/foodcard';
+import RestaurantCard from '../../components/elements/restaurantcard';
+import { API_URL } from "../../config";
 
 export default function CategoryScreen() {
   const route = useRoute();

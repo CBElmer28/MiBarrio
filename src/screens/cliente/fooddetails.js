@@ -2,8 +2,8 @@
 import React, { useState, useContext } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import { CartContext } from '../context/CartContext';
-import categorystyles from '../styles/CategoryStyles';
+import { CartContext } from '../../context/CartContext';
+import categorystyles from '../../styles/CategoryStyles';
 
 export default function FoodDetails() {
   const route = useRoute();
@@ -40,7 +40,7 @@ export default function FoodDetails() {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-        <Image source={require('../../assets/icons/Back.png')} style={categorystyles.headerIcon} />
+        <Image source={require('../../../assets/icons/Back.png')} style={categorystyles.headerIcon} />
       </TouchableOpacity>
 
       <Image source={{ uri: food.imagen }} style={styles.image} />

@@ -44,7 +44,7 @@ export default function Orders({navigation}) {
                 <View style={styles.headerRow}>
   <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
     <Image
-      source={require('../../assets/icons/Back.png')}
+      source={require('../../../assets/icons/Back.png')}
       style={styles.backIcon}
     />
   </TouchableOpacity>
