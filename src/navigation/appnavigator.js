@@ -4,7 +4,7 @@ import ClienteStack from './stacks/ClienteStack';
 import CocineroStack from '../navigation/stacks/CocineroStack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function MainNavigator() {
+export default function AppNavigator() {
   const [tipo, setTipo] = useState(null);
 
   useEffect(() => {
