@@ -1,27 +1,21 @@
-// src/screens/trackingscreen.js
+
 import React, { useRef, useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-  StyleSheet,
-  Dimensions,
-  FlatList,
-  Alert,
-} from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, Dimensions, FlatList } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import MapWebView from '../../components/mapwebview';
 import categorystyles from '../../styles/CategoryStyles';
 import homestyles from '../../styles/HomeStyles';
+import io from 'socket.io-client';
+import { API_URL } from "../../config";
+import * as Location from 'expo-location';
+
 
 const { height } = Dimensions.get('window');
 
 export default function TrackingScreen() {
   const navigation = useNavigation();
   const route = useRoute();
-  const order = route.params?.order || {}; // { restaurantName, datetime, items, coords, driverCoords }
-
+  const order = route.params?.order || {};
   const startCoords = order.coords || { latitude: -12.0464, longitude: -77.0428 };
   const [driverPos, setDriverPos] = useState(order.driverCoords || {
     latitude: startCoords.latitude + 0.0035,
@@ -29,43 +23,42 @@ export default function TrackingScreen() {
   });
 
   const webRef = useRef(null);
-  const intervalRef = useRef(null);
+  const socketRef = useRef(null);
 
   useEffect(() => {
-    // center map to restaurant initially (fit bounds)
+  const obtenerUbicacionCliente = async () => {
+    const { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('Permiso denegado', 'No se puede acceder a la ubicación');
+      return;
+    }
+
+    const ubicacion = await Location.getCurrentPositionAsync({});
+    const clienteCoords = {
+      latitude: ubicacion.coords.latitude,
+      longitude: ubicacion.coords.longitude,
+    };
+
+    // Enviar ubicación del cliente al mapa
+    const msg = { type: 'cliente', lat: clienteCoords.latitude, lng: clienteCoords.longitude };
+    webRef.current?.postMessage(JSON.stringify(msg));
+
+    // Centrar mapa entre cliente y repartidor
     const boundsMsg = {
       type: 'fit',
       bounds: [
         [driverPos.latitude, driverPos.longitude],
-        [startCoords.latitude, startCoords.longitude],
+        [clienteCoords.latitude, clienteCoords.longitude],
       ],
     };
-    setTimeout(() => {
-      webRef.current?.postMessage(JSON.stringify(boundsMsg));
-    }, 500);
+    webRef.current?.postMessage(JSON.stringify(boundsMsg));
+  };
 
-    // Simular movimiento: desplazarse hacia startCoords
-    let step = 0;
-    const steps = 40;
-    const latStep = (startCoords.latitude - driverPos.latitude) / steps;
-    const lngStep = (startCoords.longitude - driverPos.longitude) / steps;
+  obtenerUbicacionCliente();
 
-    intervalRef.current = setInterval(() => {
-      step += 1;
-      const newLat = driverPos.latitude + latStep * step;
-      const newLng = driverPos.longitude + lngStep * step;
-      const msg = { type: 'move', lat: newLat, lng: newLng };
-      webRef.current?.postMessage(JSON.stringify(msg));
-      setDriverPos({ latitude: newLat, longitude: newLng });
-
-      if (step >= steps) {
-        clearInterval(intervalRef.current);
-        Alert.alert('Estado', 'El repartidor llegó al restaurante (simulación).');
-      }
-    }, 800);
 
     return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
+      socketRef.current?.disconnect();
     };
   }, []);
 
@@ -87,7 +80,6 @@ export default function TrackingScreen() {
 
       <View style={styles.summary}>
         <Text style={homestyles.sectionTitle}>Seguimiento</Text>
-
         <Text style={styles.restName}>{order.restaurantName || 'Restaurante'}</Text>
         <Text style={styles.datetime}>{order.datetime || '—'}</Text>
 
@@ -111,11 +103,7 @@ export default function TrackingScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#fff' },
   mapContainer: { height: height * 0.63, width: '100%' },
-  summary: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: '#fff',
-  },
+  summary: { flex: 1, padding: 16, backgroundColor: '#fff' },
   restName: { fontSize: 18, fontWeight: '700' },
   datetime: { fontSize: 13, color: '#666', marginBottom: 8 },
   itemRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 8 },

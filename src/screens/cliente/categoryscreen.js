@@ -62,7 +62,7 @@ const [comidas, setComidas] = useState([]);
       <View style={categorystyles.headerContainer}>
         {/* Flecha atrás */}
         <TouchableOpacity onPress={() => navigation.goBack()} style={categorystyles.iconButton}>
-          <Image source={require('../../assets/icons/Back.png')} style={categorystyles.headerIcon} />
+          <Image source={require('../../../assets/icons/Back.png')} style={categorystyles.headerIcon} />
         </TouchableOpacity>
 
         {/* Dropdown de categorías */}
@@ -75,11 +75,11 @@ const [comidas, setComidas] = useState([]);
 
         {/* Botones de acción */}
         <TouchableOpacity style={categorystyles.iconButton}>
-          <Image source={require('../../assets/icons/Search.png')} style={categorystyles.headerIcon} />
+          <Image source={require('../../../assets/icons/Search.png')} style={categorystyles.headerIcon} />
         </TouchableOpacity>
 
         <TouchableOpacity style={categorystyles.iconButton}>
-          <Image source={require('../../assets/icons/Filter.png')} style={categorystyles.headerIcon} />
+          <Image source={require('../../../assets/icons/Filter.png')} style={categorystyles.headerIcon} />
         </TouchableOpacity>
       </View>
 

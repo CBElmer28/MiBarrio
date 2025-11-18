@@ -1,9 +1,9 @@
 // src/components/navigation/MainNavigator.js
 import React, { useEffect, useState } from 'react';
-import { ClienteStack } from './stacks/ClienteStack';
+import ClienteStack from './stacks/ClienteStack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function MainNavigator() {
+export default function AppNavigator() {
   const [tipo, setTipo] = useState(null);
 
   useEffect(() => {

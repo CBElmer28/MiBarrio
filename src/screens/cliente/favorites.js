@@ -38,7 +38,7 @@ export default function Favorites({ navigation }) {
             <View style={styles.headerRow}>
                 <TouchableOpacity onPress={handleBack} style={styles.backButton}>
                     <Image
-                        source={require('../../assets/icons/Back.png')}
+                        source={require('../../../assets/icons/Back.png')}
                         style={styles.backIcon}
                     />
                 </TouchableOpacity>
