@@ -43,16 +43,18 @@ export default function Home({ navigation }) {
     fetchData();
   }, []);
 
+  console.log("Restaurantes:", restaurantes);
+console.log("Comidas:", comidas);
   //Conseguir filtrados
   const restaurantesFiltrados = restaurantes.filter(item =>
     (selectedCategory === 'Todas' ||
-      item.Categoria?.some(cat => cat.nombre === selectedCategory)) &&
+      item.categorias?.some(cat => cat.nombre === selectedCategory)) &&
     item.nombre.toLowerCase().includes(query.toLowerCase())
   );
 
   const comidasFiltradas = comidas.filter(item =>
     (selectedCategory === 'Todas' ||
-      item.Categoria?.some(cat => cat.nombre === selectedCategory)) &&
+      item.categorias?.some(cat => cat.nombre === selectedCategory)) &&
     item.nombre.toLowerCase().includes(query.toLowerCase())
   );
 

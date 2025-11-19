@@ -1,50 +1,85 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, FlatList } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import { foods } from '../../../data/data';
 import homestyles from '../../styles/HomeStyles';
 import categorystyles from '../../styles/CategoryStyles';
+import { API_URL } from "../../config";
 
 
 export default function RestaurantDetails() {
+  
   const route = useRoute();
   const navigation = useNavigation();
   const { rest } = route.params;
-  const categories = rest.Categoria?.map(c => c.nombre) || [];
+  const categories = rest.categorias?.map(c => c.nombre) || [];
 
 const rating = parseFloat(rest.rating) || 0;
 const deliveryCost = parseFloat(rest.delivery_cost) || 0;
 const time = parseFloat(rest.tiempo_entrega) || 0;
 
   // Filtrar comidas por restaurante
-  const restaurantFoods = foods.filter(food => food.restaurantId === rest.id);
+  const [restaurantFoods, setRestaurantFoods] = React.useState([]);
 
-  const renderFoodItem = ({ item }) => (
-    <TouchableOpacity 
+  React.useEffect(() => {
+  const fetchFoods = async () => {
+    try {
+      const res = await fetch(`${API_URL}/platillos/restaurante/${rest.id}`);
+      const data = await res.json();
+      setRestaurantFoods(data);
+    } catch (err) {
+      console.log("Error cargando platillos:", err);
+    }
+  };
+    fetchFoods();
+}, []);
+
+    const renderFoodItem = ({ item }) => (
+    <TouchableOpacity
       style={styles.foodCard}
-      onPress={() => navigation.navigate('FoodDetails', { food: item })}
+      onPress={() => navigation.navigate("FoodDetails", { food: item })}
     >
-      <Image source={item.image} style={styles.foodImage} />
+      <Image source={{ uri: item.imagen }} style={styles.foodImage} />
+
       <View style={styles.foodInfo}>
         <Text style={styles.foodName}>{item.nombre}</Text>
+
         <View style={styles.foodDetails}>
           <View style={styles.ratingContainer}>
-            <Image 
-              source={require('../../../assets/icons/Star.png')} 
-              style={[styles.smallIcon, { tintColor: '#FFD700' }]} 
+            <Image
+              source={require("../../../assets/icons/Star.png")}
+              style={[styles.smallIcon, { tintColor: "#FFD700" }]}
             />
-            <Text style={styles.ratingText}>{item.rating.toFixed(1)}</Text>
+            <Text style={styles.ratingText}>
+              {Number(item.rating || 0).toFixed(1)}
+            </Text>
           </View>
-          <Text style={styles.priceText}>S/ {item.price.toFixed(2)}</Text>
+
+          <Text style={styles.priceText}>
+            S/ {Number(item.precio).toFixed(2)}
+          </Text>
         </View>
-        <Text style={styles.categoryText}>{item.categories.join(', ')}</Text>
+
+        <Text style={styles.categoryText}>
+          {item.categorias?.map(c => c.nombre).join(", ")}
+        </Text>
       </View>
     </TouchableOpacity>
   );
 
+
+
   return (
-    <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+  <FlatList
+    data={restaurantFoods}
+    renderItem={renderFoodItem}
+    keyExtractor={(item) => item.id.toString()}
+    ListEmptyComponent={
+      <View style={styles.emptyContainer}>
+        <Text style={styles.emptyText}>😔 No hay platillos disponibles</Text>
+      </View>
+    }
+    ListHeaderComponent={
+      <>
         <TouchableOpacity onPress={() => navigation.goBack()} style={categorystyles.iconButton}>
           <Image source={require('../../../assets/icons/Back.png')} style={categorystyles.headerIcon} />
         </TouchableOpacity>
@@ -60,52 +95,23 @@ const time = parseFloat(rest.tiempo_entrega) || 0;
           </View>
           <View style={styles.infoItem}>
             <Image source={require('../../../assets/icons/Car.png')} style={[homestyles.icon, { tintColor: '#FF6600' }]} />
-            <Text style={homestyles.infoText}>{deliveryCost.toFixed(2)}</Text>
+            <Text style={homestyles.infoText}>S/ {deliveryCost.toFixed(2)}</Text>
           </View>
           <View style={styles.infoItem}>
             <Image source={require('../../../assets/icons/Watch.png')} style={[homestyles.icon, { tintColor: '#FF6600' }]} />
-            <Text style={homestyles.infoText}>{time}</Text>
+            <Text style={homestyles.infoText}>{time} min</Text>
           </View>
         </View>
 
         <View style={styles.divider} />
 
         <Text style={styles.menuTitle}>🍽️ Menú del Restaurante</Text>
-        
-        {restaurantFoods.length > 0 ? (
-          <View style={styles.foodList}>
-            {restaurantFoods.map((item) => (
-              <TouchableOpacity 
-                key={item.id}
-                style={styles.foodCard}
-                onPress={() => navigation.navigate('FoodDetails', { food: item })}
-              >
-                <Image source={item.image} style={styles.foodImage} />
-                <View style={styles.foodInfo}>
-                  <Text style={styles.foodName}>{item.name}</Text>
-                  <View style={styles.foodDetails}>
-                    <View style={styles.ratingContainer}>
-                      <Image 
-                        source={require('../../../assets/icons/Star.png')} 
-                        style={[styles.smallIcon, { tintColor: '#FFD700' }]} 
-                      />
-                      <Text style={styles.ratingText}>{item.rating.toFixed(1)}</Text>
-                    </View>
-                    <Text style={styles.priceText}>S/ {item.price.toFixed(2)}</Text>
-                  </View>
-                  <Text style={styles.categoryText}>{item.categories.join(', ')}</Text>
-                </View>
-              </TouchableOpacity>
-            ))}
-          </View>
-        ) : (
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>😔 No hay platillos disponibles</Text>
-          </View>
-        )}
-      </ScrollView>
-    </View>
-  );
+      </>
+    }
+    contentContainerStyle={styles.scrollContent}
+  />
+);
+
 }
 
 const styles = StyleSheet.create({

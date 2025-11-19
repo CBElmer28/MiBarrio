@@ -1,1 +1,4 @@
-export const API_URL = "http://192.168.1.10:3000/api";
+import { API_URL as ENV_API_URL, GOOGLE_MAPS_API_KEY as ENV_GOOGLE_MAPS_API_KEY } from "@env";
+
+export const API_URL = ENV_API_URL;
+export const GOOGLE_MAPS_API_KEY = ENV_GOOGLE_MAPS_API_KEY;
