@@ -47,12 +47,12 @@ const [comidas, setComidas] = useState([]);
   // 🔹 Filtrar por categoría seleccionada
   const restaurantesFiltrados = restaurantes.filter(item =>
     selectedCategory === 'Todas' ||
-    item.Categoria?.some(cat => cat.nombre === selectedCategory)
+    item.categorias?.some(cat => cat.nombre === selectedCategory)
   );
 
   const comidasFiltradas = comidas.filter(item =>
     selectedCategory === 'Todas' ||
-    item.Categoria?.some(cat => cat.nombre === selectedCategory)
+    item.categorias?.some(cat => cat.nombre === selectedCategory)
   );
 
 

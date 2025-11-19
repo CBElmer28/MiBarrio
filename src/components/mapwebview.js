@@ -1,5 +1,6 @@
 import React from 'react';
 import { WebView } from 'react-native-webview';
+import { GOOGLE_MAPS_API_KEY } from '../config'; 
 
 export default function MapWebView({ latitude, longitude, webRefProp }) {
   const htmlContent = `
@@ -11,7 +12,7 @@ export default function MapWebView({ latitude, longitude, webRefProp }) {
       <style>
         html, body, #map { height: 100%; margin: 0; padding: 0; }
       </style>
-      <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAJNyOejN1feT4dVRkYZVox5iCGgOIxI8U&callback=initMap" async defer></script>
+      <script src="https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMap" async defer></script>
     </head>
     <body>
       <div id="map"></div>

@@ -54,7 +54,7 @@ export default function FoodDetails() {
       <View style={styles.section}>
   <Text style={styles.sectionTitle}>Categoria</Text>
   <View style={styles.itemsContainer}>
-    {(food.Categoria || []).map((cat, i) => (
+    {(food.categorias || []).map((cat, i) => (
       <View key={i} style={styles.itemRow}>
         <Text style={styles.bullet}>•</Text>
         <Text style={styles.itemText}>{cat.nombre}</Text>
