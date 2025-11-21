@@ -11,6 +11,33 @@ const getHeaders = async () => {
   };
 };
 
+// 🆕 CREAR ORDEN (Cliente)
+export const crearOrden = async (orderData) => {
+  try {
+    const headers = await getHeaders();
+    console.log("📤 Enviando orden:", JSON.stringify(orderData));
+    
+    const response = await fetch(`${API_URL}/orden`, { // Asegúrate que la ruta coincida con app.js
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify(orderData)
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+        return { success: true, orden: data.orden };
+    } else {
+        return { success: false, error: data.error || "Error al crear la orden" };
+    }
+  } catch (error) {
+    console.error("🔥 Error de red creando orden:", error);
+    return { success: false, error: "Error de conexión" };
+  }
+};
+
+
+
 /* ====================================================
    FUNCIONES PARA EL COCINERO (Gestión)
    ==================================================== */

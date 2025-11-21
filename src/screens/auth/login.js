@@ -8,8 +8,6 @@ import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { API_URL } from "../../config";
 
 export default function Login({ navigation }) {
-  console.log("API_URL:", API_URL);
-
   const [email, setEmail] = useState('');
   const [contraseña, setContraseña] = useState('');
   const [error, setError] = useState('');
