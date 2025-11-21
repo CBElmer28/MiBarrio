@@ -1,12 +1,12 @@
 {
   "expo": {
     "name": "MiBarrio",
-    "slug": "MiBarrio",
+    "slug": "mibarrio",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
@@ -20,10 +20,27 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.cbelmer28.mibarrio"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "a441c0e1-8ed7-4675-95c5-71209314e12f"
+      }
+    },
+    "owner": "cbelmer28",
+    "plugins": [
+      "expo-font",
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Tu app necesita acceder a tu ubicación para mostrar tu posición en el mapa y seguir la ruta de entrega."
+        }
+      ],
+      "expo-notifications"
+    ]
   }
 }
