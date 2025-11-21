@@ -20,11 +20,9 @@ export default function Home({ navigation }) {
   const categories = ['Todas', 'Hamburguesa', 'Pizza', 'Pollo', 'Café', 'Postres'];
 
   //Sacar datos del backend
-    useEffect(() => {
+  useEffect(() => {
     const fetchData = async () => {
       try {
-        console.log("API_URL:", API_URL);
-        // Cambia la URL segun sea necesario
         const resRest = await fetch(`${API_URL}/restaurantes`);
         const resFood = await fetch(`${API_URL}/platillos`);
         
@@ -43,8 +41,6 @@ export default function Home({ navigation }) {
     fetchData();
   }, []);
 
-  console.log("Restaurantes:", restaurantes);
-console.log("Comidas:", comidas);
   //Conseguir filtrados
   const restaurantesFiltrados = restaurantes.filter(item =>
     (selectedCategory === 'Todas' ||
@@ -59,7 +55,7 @@ console.log("Comidas:", comidas);
   );
 
   //Cargando
-    if (loading) {
+  if (loading) {
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <Text>Cargando datos...</Text>
@@ -67,38 +63,37 @@ console.log("Comidas:", comidas);
     );
   }
 
-
   return (
     <View style={styles.container}>
       {/* Sección de Header */}
-    <View style={[styles.headerRow, { justifyContent: 'space-between' }]}>
-      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-        <TouchableOpacity onPress={() => navigation.navigate('Menu')} style={styles.menuButton}>
-          <MaterialIcons name="menu" size={28} color="#333" />
-        </TouchableOpacity>
-        <Text style={styles.header}>ENTREGAR A: Lima Norte</Text>
-      </View>
+      <View style={[styles.headerRow, { justifyContent: 'space-between' }]}>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <TouchableOpacity onPress={() => navigation.navigate('Menu')} style={styles.menuButton}>
+            <MaterialIcons name="menu" size={28} color="#333" />
+          </TouchableOpacity>
+          <Text style={styles.header}>ENTREGAR A: Lima Norte</Text>
+        </View>
 
-      <TouchableOpacity onPress={() => navigation.navigate('CartScreen')} style={{ padding: 8 }}>
-        <MaterialIcons name="shopping-cart" size={26} color="#333" />
-        {cartCount > 0 && (
-          <View style={{
-            position: 'absolute',
-            right: 2,
-            top: -4,
-            backgroundColor: '#FF3B30',
-            borderRadius: 8,
-            minWidth: 16,
-            height: 16,
-            alignItems: 'center',
-            justifyContent: 'center',
-            paddingHorizontal: 3,
-          }}>
-            <Text style={{ color: '#fff', fontSize: 10, fontWeight: '700' }}>{cartCount}</Text>
-          </View>
-        )}
-      </TouchableOpacity>
-    </View>
+        <TouchableOpacity onPress={() => navigation.navigate('CartScreen')} style={{ padding: 8 }}>
+          <MaterialIcons name="shopping-cart" size={26} color="#333" />
+          {cartCount > 0 && (
+            <View style={{
+              position: 'absolute',
+              right: 2,
+              top: -4,
+              backgroundColor: '#FF3B30',
+              borderRadius: 8,
+              minWidth: 16,
+              height: 16,
+              alignItems: 'center',
+              justifyContent: 'center',
+              paddingHorizontal: 3,
+            }}>
+              <Text style={{ color: '#fff', fontSize: 10, fontWeight: '700' }}>{cartCount}</Text>
+            </View>
+          )}
+        </TouchableOpacity>
+      </View>
       <Text style={styles.greeting}>Hola Elmer, Buenas Tardes!</Text>
 
       <TextInput
@@ -136,38 +131,36 @@ console.log("Comidas:", comidas);
         ))}
       </ScrollView>
 
-
       <ScrollView>
         {/* Sección de Restaurantes */}
         {restaurantesFiltrados.length > 0 && (
-  <>
-    <Text style={styles.sectionTitle}>Restaurantes Disponibles</Text>
-    {restaurantesFiltrados.map((rest) => (
-      <RestaurantCard
-        key={rest.id}
-        restaurant={rest}
-        onPress={() => navigation.navigate('RestaurantDetails', { rest })}
-      />
-    ))}
-  </>
-)}
-
+          <>
+            <Text style={styles.sectionTitle}>Restaurantes Disponibles</Text>
+            {restaurantesFiltrados.map((rest) => (
+              <RestaurantCard
+                key={rest.id}
+                restaurant={rest}
+                onPress={() => navigation.navigate('RestaurantDetails', { rest })}
+              />
+            ))}
+          </>
+        )}
 
         {/* Sección de Comidas */}
         {comidasFiltradas.length > 0 && (
-  <>
-    <Text style={styles.sectionTitle}>Comida Rápida Popular</Text>
-    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 10 }}>
-      {comidasFiltradas.map((food) => (
-        <FoodCard
-          key={food.id}
-          food={food}
-          onPress={() => navigation.navigate('FoodDetails', { food })}
-        />
-      ))}
-    </ScrollView>
-  </>
-)}
+          <>
+            <Text style={styles.sectionTitle}>Comida Rápida Popular</Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 10 }}>
+              {comidasFiltradas.map((food) => (
+                <FoodCard
+                  key={food.id}
+                  food={food}
+                  onPress={() => navigation.navigate('FoodDetails', { food })}
+                />
+              ))}
+            </ScrollView>
+          </>
+        )}
       </ScrollView>
     </View>
   );

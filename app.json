@@ -33,7 +33,14 @@
     },
     "owner": "cbelmer28",
     "plugins": [
-      "expo-font"
+      "expo-font",
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Tu app necesita acceder a tu ubicación para mostrar tu posición en el mapa y seguir la ruta de entrega."
+        }
+      ],
+      "expo-notifications"
     ]
   }
 }
