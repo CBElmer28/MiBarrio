@@ -1,172 +1,154 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList,Image } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, FlatList, StyleSheet, Image, ActivityIndicator, RefreshControl } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+// Asegúrate de tener este servicio en orderService.js o créalo similar a 'misOrdenes' del backend
+import { API_URL } from '../../config';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function Orders({navigation}) {
-      const handleClose = () => {
-    navigation.closeDrawer();
+export default function Orders() {
+  const navigation = useNavigation();
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [tab, setTab] = useState('active'); // 'active' | 'history'
+
+  const fetchOrders = async () => {
+    setLoading(true);
+    try {
+      const token = await AsyncStorage.getItem('token');
+      const response = await fetch(`${API_URL}/orden/mis-ordenes`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        // Ordenar por fecha descendente (ID más alto primero)
+        setOrders(data.sort((a, b) => b.id - a.id));
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const [activeTab, setActiveTab] = useState('ongoing');
+  useEffect(() => {
+    fetchOrders();
+  }, []);
 
-  const ongoingOrders = [
-    { id: '1', vendor: 'Pizza Hut', price: 35.25, items: 3, orderNo: '162432' },
-    { id: '2', vendor: 'McDonald', price: 40.15, items: 2, orderNo: '242432' },
-    { id: '3', vendor: 'Starbucks', price: 17.20, items: 1, orderNo: '240112' },
-  ];
+  // Filtrar órdenes según tab
+  const filteredOrders = orders.filter(o => {
+    const isCompleted = ['entregada', 'cancelada'].includes(o.estado.toLowerCase());
+    return tab === 'history' ? isCompleted : !isCompleted;
+  });
 
-  const historyOrders = [
-    { id: '4', vendor: 'Burger King', price: 28.50, items: 2, orderNo: '152222' },
-    { id: '5', vendor: 'KFC', price: 22.00, items: 1, orderNo: '142111' },
-  ];
+  const getStatusColor = (status) => {
+    switch (status.toLowerCase()) {
+      case 'pendiente': return '#FFC107'; // Amarillo
+      case 'preparando': return '#FF6B35'; // Naranja
+      case 'en camino': return '#2196F3'; // Azul
+      case 'entregada': return '#4CAF50'; // Verde
+      case 'cancelada': return '#F44336'; // Rojo
+      default: return '#999';
+    }
+  };
 
-  const renderOrder = ({ item }) => (
-    <View style={styles.orderCard}>
-      <View style={styles.orderInfo}>
-        <Text style={styles.vendor}>{item.vendor}</Text>
-        <Text style={styles.details}>S/.{item.price.toFixed(2)} • {item.items} {item.items > 1 ? 'items' : 'item'}</Text>
-        <Text style={styles.orderNo}>Orden #{item.orderNo}</Text>
+  const renderItem = ({ item }) => (
+    <TouchableOpacity 
+      style={styles.card}
+      onPress={() => navigation.navigate('TrackingScreen', { order: item })}
+    >
+      <View style={styles.cardHeader}>
+        <Text style={styles.restName}>Orden #{item.id}</Text>
+        <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.estado) }]}>
+          <Text style={styles.statusText}>{item.estado.toUpperCase()}</Text>
+        </View>
       </View>
-      {activeTab === 'ongoing' && (
-        <View style={styles.actions}>
-          <TouchableOpacity style={[styles.button, styles.track]}>
-            <Text style={styles.buttonText}>Rastrear</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.button, styles.cancel]}>
-            <Text style={styles.buttonText}>Cancelar</Text>
-          </TouchableOpacity>
+      
+      {/* Mostrar primer detalle como resumen */}
+      {item.detalles && item.detalles.length > 0 && (
+        <View style={styles.detailRow}>
+          <Text style={styles.detailText}>
+            {item.detalles[0].cantidad}x {item.detalles[0].platillo?.nombre || 'Platillo'}
+            {item.detalles.length > 1 ? ` + ${item.detalles.length - 1} más` : ''}
+          </Text>
         </View>
       )}
-    </View>
+
+      <View style={styles.cardFooter}>
+        <Text style={styles.dateText}>{new Date(item.createdAt).toLocaleDateString()}</Text>
+        <Text style={styles.totalPrice}>S/ {item.total}</Text>
+      </View>
+    </TouchableOpacity>
   );
 
   return (
     <View style={styles.container}>
-                <View style={styles.headerRow}>
-  <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-    <Image
-      source={require('../../../assets/icons/Back.png')}
-      style={styles.backIcon}
-    />
-  </TouchableOpacity>
-  <Text style={styles.headerTitle}>Pedidos</Text>
-</View>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
+          <Ionicons name="arrow-back" size={24} color="#fff" />
+        </TouchableOpacity>
+        <Text style={styles.title}>Mis Pedidos</Text>
+        <View style={{width: 40}} />
+      </View>
+
       {/* Tabs */}
       <View style={styles.tabs}>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === 'ongoing' && styles.activeTab]}
-          onPress={() => setActiveTab('ongoing')}
+        <TouchableOpacity 
+          style={[styles.tabItem, tab === 'active' && styles.tabActive]} 
+          onPress={() => setTab('active')}
         >
-          <Text style={[styles.tabText, activeTab === 'ongoing' && styles.activeTabText]}>En curso</Text>
+          <Text style={[styles.tabText, tab === 'active' && styles.tabTextActive]}>En Curso</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === 'history' && styles.activeTab]}
-          onPress={() => setActiveTab('history')}
+        <TouchableOpacity 
+          style={[styles.tabItem, tab === 'history' && styles.tabActive]} 
+          onPress={() => setTab('history')}
         >
-          <Text style={[styles.tabText, activeTab === 'history' && styles.activeTabText]}>Historial</Text>
+          <Text style={[styles.tabText, tab === 'history' && styles.tabTextActive]}>Historial</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Lista */}
-      <FlatList
-        data={activeTab === 'ongoing' ? ongoingOrders : historyOrders}
-        keyExtractor={(item) => item.id}
-        renderItem={renderOrder}
-        contentContainerStyle={{ padding: 16 }}
-      />
+      {loading ? (
+        <ActivityIndicator color="#FF6B35" style={{marginTop: 50}} />
+      ) : (
+        <FlatList
+          data={filteredOrders}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={renderItem}
+          contentContainerStyle={styles.list}
+          refreshControl={<RefreshControl refreshing={loading} onRefresh={fetchOrders} tintColor="#FF6B35" />}
+          ListEmptyComponent={
+            <View style={styles.emptyContainer}>
+              <Ionicons name="receipt-outline" size={60} color="#444" />
+              <Text style={styles.emptyText}>No hay pedidos en esta sección.</Text>
+            </View>
+          }
+        />
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' },
-  tabs: {
-    flexDirection: 'row',
-    backgroundColor: '#f5f5f5',
-    padding: 8,
-    borderRadius: 8,
-    margin: 16,
-  },
-  tab: {
-    flex: 1,
-    paddingVertical: 8,
-    alignItems: 'center',
-    borderRadius: 6,
-  },
-  activeTab: {
-    backgroundColor: '#FF6600',
-  },
-  tabText: {
-    fontSize: 14,
-    color: '#555',
-    fontWeight: '500',
-  },
-  activeTabText: {
-    color: '#fff',
-  },
-  orderCard: {
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    padding: 16,
-    marginBottom: 12,
-    elevation: 2,
-  },
-  orderInfo: {
-    marginBottom: 10,
-  },
-  vendor: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  details: {
-    fontSize: 14,
-    color: '#777',
-    marginTop: 2,
-  },
-  orderNo: {
-    fontSize: 12,
-    color: '#aaa',
-    marginTop: 2,
-  },
-  actions: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    gap: 8,
-  },
-  button: {
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 6,
-  },
-  track: {
-    backgroundColor: '#FF6600',
-  },
-  cancel: {
-    backgroundColor: '#999',
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 13,
-    fontWeight: '500',
-  },
-  headerRow: {
-  flexDirection: 'row',
-  alignItems: 'center',
-  paddingVertical: 10,
-},
-backButton: {
-  padding: 4,
-  marginRight: 8,
-},
-backIcon: {
-  width: 26,
-  height: 26,
-  tintColor: '#FF6600',
-  resizeMode: 'contain',
-},
-headerTitle: {
-  fontSize: 18,
-  fontWeight: 'bold',
-},
-
+  container: { flex: 1, backgroundColor: '#1a1d2e' },
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingTop: 50, paddingHorizontal: 20, paddingBottom: 20 },
+  backBtn: { padding: 8, backgroundColor: '#2a2d3e', borderRadius: 12 },
+  title: { fontSize: 20, fontWeight: 'bold', color: '#fff' },
+  tabs: { flexDirection: 'row', paddingHorizontal: 20, marginBottom: 10 },
+  tabItem: { flex: 1, paddingVertical: 12, alignItems: 'center', borderBottomWidth: 2, borderBottomColor: '#2a2d3e' },
+  tabActive: { borderBottomColor: '#FF6B35' },
+  tabText: { color: '#8B8D98', fontSize: 14, fontWeight: '600' },
+  tabTextActive: { color: '#fff' },
+  list: { padding: 20 },
+  card: { backgroundColor: '#252838', borderRadius: 16, padding: 16, marginBottom: 16 },
+  cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
+  restName: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
+  statusBadge: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8 },
+  statusText: { color: '#fff', fontSize: 10, fontWeight: 'bold' },
+  detailRow: { marginBottom: 12 },
+  detailText: { color: '#ccc', fontSize: 14 },
+  cardFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', borderTopWidth: 1, borderTopColor: '#333', paddingTop: 12 },
+  dateText: { color: '#8B8D98', fontSize: 12 },
+  totalPrice: { color: '#FF6B35', fontSize: 16, fontWeight: 'bold' },
+  emptyContainer: { alignItems: 'center', marginTop: 100 },
+  emptyText: { color: '#666', marginTop: 16, fontSize: 16 },
 });
