@@ -17,15 +17,15 @@ export default function Profile({ navigation }) {
     };
 
   const menuItems = [
-    { icon: 'person', label: 'Información personal'},
-    { icon: 'map', label: 'Direcciones'},
-    { icon: 'shopping-cart', label: 'Carrito', screen: 'Orders' },
+    { icon: 'person', label: 'Información personal', screen: 'Info' },
+    { icon: 'map', label: 'Direcciones', screen: 'Addresses' },
+    { icon: 'shopping-cart', label: 'Ordenes', screen: 'Orders' },
     { icon: 'favorite', label: 'Favoritos', screen: 'Favorites' },
-    { icon: 'doorbell', label: 'Notificaciones'},
-    { icon: 'credit-card', label: 'Metodos de pago'},
-    { icon: 'question-mark', label: 'FAQs'},
+    { icon: 'doorbell', label: 'Notificaciones', screen: 'Notifications' },
+    { icon: 'credit-card', label: 'Metodos de pago', screen: 'PaymentMethods' },
+    { icon: 'question-mark', label: 'FAQs', screen: 'FAQs'},
     { icon: 'person', label: 'Reseñas de los usuarios'},
-    { icon: 'settings', label: 'Configuración'},
+    { icon: 'settings', label: 'Configuración', screen: 'Settings' },
     { icon: 'logout', label: 'Cerrar sesión', action: handleLogout },
   ];
 

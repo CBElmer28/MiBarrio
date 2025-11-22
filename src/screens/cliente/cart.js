@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import {
     View,
     Text,
@@ -13,6 +13,8 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { CartContext } from '../../context/CartContext';
 import homestyles from '../../styles/HomeStyles';
 import categorystyles from '../../styles/CategoryStyles';
+// IMPORTAR EL MODAL
+import AddressModal from '../../components/elements/addressmodal';
 
 export default function CartScreen() {
     const route = useRoute();
@@ -27,12 +29,25 @@ export default function CartScreen() {
     } = useContext(CartContext);
     const navigation = useNavigation();
 
+    // Estado para controlar la visibilidad del modal
+    const [modalVisible, setModalVisible] = useState(false);
+
     const placeOrder = () => {
         if (items.length === 0) {
             Alert.alert('Carrito vacío', 'Agrega productos antes de poner la orden');
             return;
         }
+        // Validar que haya dirección antes de pasar al pago
+        if (!address || address.trim() === '') {
+            Alert.alert('Falta Dirección', 'Por favor ingresa o selecciona una dirección de entrega.');
+            return;
+        }
         navigation.navigate('PaymentScreen', { from: 'Cart' });
+    };
+
+    const handleAddressSelect = (selectedAddress) => {
+        setAddress(selectedAddress);
+        setModalVisible(false);
     };
 
     return (
@@ -93,15 +108,16 @@ export default function CartScreen() {
                 <View style={styles.addressSection}>
                     <View style={styles.addressHeader}>
                         <Text style={styles.addressLabel}>DIRECCIÓN DE ENTREGA</Text>
-                        <TouchableOpacity onPress={() => Alert.alert('Editar dirección', 'Navega a la pantalla de edición o abre un modal')}>
-                            <Text style={styles.editText}>EDITAR</Text>
+                        {/* Al presionar EDITAR se abre el modal */}
+                        <TouchableOpacity onPress={() => setModalVisible(true)}>
+                            <Text style={styles.editText}>EDITAR / SELECCIONAR</Text>
                         </TouchableOpacity>
                     </View>
                     <TextInput
                         value={address}
                         onChangeText={setAddress}
                         style={styles.addressInput}
-                        placeholder="Escribe la dirección"
+                        placeholder="Escribe o selecciona una dirección"
                         placeholderTextColor="#999"
                     />
                 </View>
@@ -115,6 +131,13 @@ export default function CartScreen() {
                     <Text style={styles.orderButtonText}>REALIZAR PEDIDO</Text>
                 </TouchableOpacity>
             </View>
+
+            {/* Integración del Modal */}
+            <AddressModal 
+                visible={modalVisible}
+                onClose={() => setModalVisible(false)}
+                onSelectAddress={handleAddressSelect}
+            />
         </View>
     );
 }

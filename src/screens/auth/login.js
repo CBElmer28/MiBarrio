@@ -8,36 +8,41 @@ import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { API_URL } from "../../config";
 
 export default function Login({ navigation }) {
-  console.log("API_URL:", API_URL);
-
   const [email, setEmail] = useState('');
   const [contraseña, setContraseña] = useState('');
   const [error, setError] = useState('');
   const [recordarme, setRecordarme] = useState(false);
 
-  const handleLogin = async () => {
-    try {
-      const response = await axios.post(`${API_URL}/auth/login`, {
-        email,
-        contraseña
-      });
+    const handleLogin = async () => {
+        try {
+            const response = await axios.post(`${API_URL}/auth/login`, {
+                email,
+                contraseña
+            });
 
-      const { token, usuario } = response.data;
+            const { token, usuario } = response.data;
 
-      await AsyncStorage.setItem('usuario', JSON.stringify(usuario));
-        if (recordarme) {
+            // 1. Guardar datos del usuario
+            await AsyncStorage.setItem('usuario', JSON.stringify(usuario));
+
+            // 2. CORRECCIÓN: Guardar el token SIEMPRE.
+            // Es necesario para que las peticiones (como guardar dirección) funcionen en esta sesión.
             await AsyncStorage.setItem('token', token);
-            await AsyncStorage.setItem('token_timestamp', Date.now().toString());
-        } else {
-            await AsyncStorage.removeItem('token');
-            await AsyncStorage.removeItem('token_timestamp');
-        }
 
-        navigation.replace('Main'); // Redirige al home
-    } catch (err) {
-      setError(err.response?.data?.error || 'Error al iniciar sesión');
-    }
-  };
+            // 3. Lógica de "Recordarme" (Opcional)
+            // Puedes guardar una bandera separada si quieres verificarla al iniciar la app en el futuro
+            if (recordarme) {
+                await AsyncStorage.setItem('remember_me', 'true');
+            } else {
+                await AsyncStorage.removeItem('remember_me');
+            }
+
+            navigation.replace('Main'); // Redirige al home
+        } catch (err) {
+            console.error(err);
+            setError(err.response?.data?.error || 'Error al iniciar sesión');
+        }
+    };
 
   return (
     <View style={styles.container}>

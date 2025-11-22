@@ -1,229 +1,289 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity, Platform } from 'react-native';
-import MapView, { Marker, Polyline } from 'react-native-maps';
+import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity, Platform, Alert } from 'react-native';
+import MapView, { Marker, Polyline, PROVIDER_GOOGLE } from 'react-native-maps';
 import * as Location from 'expo-location';
-import * as Notifications from 'expo-notifications'; // <--- Importar notificaciones
+import * as Notifications from 'expo-notifications';
 import { io } from "socket.io-client";
 import { getDistance } from 'geolib';
 import polyline from '@mapbox/polyline';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_URL, GOOGLE_MAPS_API_KEY } from '../../config';
 import { MaterialIcons } from '@expo/vector-icons';
 
 const SOCKET_URL = API_URL.replace('/api', '');
-const PROXIMITY_THRESHOLD = 200;
-const ROUTE_REFETCH_INTERVAL = 5000;
+const PROXIMITY_THRESHOLD = 50; // 50 metros
+const ROUTE_REFETCH_INTERVAL = 15000;
 
-// Configuración para que la notificación aparezca con la app en primer plano
+// 1. Configuración global de notificaciones
 Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: false,
-  }),
+    handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: true,
+        shouldSetBadge: false,
+    }),
 });
 
 export default function DeliveryMap({ route, navigation }) {
-  const { order } = route.params;
-  const [location, setLocation] = useState(null);
-  const [errorMsg, setErrorMsg] = useState(null);
-  const [isAlertShown, setIsAlertShown] = useState(false);
-  const [routeCoordinates, setRouteCoordinates] = useState([]);
-  const mapRef = useRef(null);
-  const lastRouteFetchTime = useRef(0);
+    const { order } = route.params;
 
-  // Función para enviar la notificación
-  const sendProximityNotification = async () => {
-    await Notifications.scheduleNotificationAsync({
-      content: {
-        title: "Estás Cerca del Destino",
-        body: `Has llegado a la ubicación de ${order.cliente.nombre}.`,
-        data: { orderId: order.id },
-      },
-      trigger: null,
-    });
-  };
+    const [destination, setDestination] = useState(order.destination || null);
+    const [location, setLocation] = useState(null);
+    const [errorMsg, setErrorMsg] = useState(null);
+    const [isAlertShown, setIsAlertShown] = useState(false);
+    const [routeCoordinates, setRouteCoordinates] = useState([]);
+    const [routeDistance, setRouteDistance] = useState(null);
 
-  const fetchRoute = async (origin, destination) => {
-    if (!GOOGLE_MAPS_API_KEY) {
-      console.error("La clave de API de Google Maps no está configurada.");
-      return;
-    }
-    try {
-      const response = await fetch(
-        `https://maps.googleapis.com/maps/api/directions/json?origin=${origin.latitude},${origin.longitude}&destination=${destination.latitude},${destination.longitude}&key=${GOOGLE_MAPS_API_KEY}`
-      );
-      const json = await response.json();
-      if (json.routes.length > 0) {
-        const points = polyline.decode(json.routes[0].overview_polyline.points);
-        const coords = points.map(point => ({
-          latitude: point[0],
-          longitude: point[1],
-        }));
-        setRouteCoordinates(coords);
-      }
-    } catch (error) {
-      console.error("Error al obtener la ruta:", error);
-    }
-  };
+    const mapRef = useRef(null);
+    const lastRouteFetchTime = useRef(0);
+    const socketRef = useRef(null);
 
-  useEffect(() => {
-    const socket = io(SOCKET_URL);
-    let locationSubscription = null;
-
-    const requestPermissions = async () => {
-      const { status: locationStatus } = await Location.requestForegroundPermissionsAsync();
-      if (locationStatus !== 'granted') {
-        setErrorMsg('El permiso para acceder a la ubicación fue denegado');
-        return false;
-      }
-
-      const { status: notificationStatus } = await Notifications.requestPermissionsAsync();
-      if (notificationStatus !== 'granted') {
-        console.warn('El permiso para notificaciones fue denegado');
-      }
-      return true;
-    };
-
-    const startTracking = async () => {
-      const permissionsGranted = await requestPermissions();
-      if (!permissionsGranted) return;
-
-      let initialLocation = await Location.getCurrentPositionAsync({});
-      setLocation(initialLocation.coords);
-      
-      if (order.destination) {
-        fetchRoute(initialLocation.coords, order.destination);
-        lastRouteFetchTime.current = Date.now();
-      }
-
-      locationSubscription = await Location.watchPositionAsync({
-        accuracy: Location.Accuracy.High,
-        timeInterval: 3000,
-        distanceInterval: 10,
-      }, (newLocation) => {
-        const currentLocation = newLocation.coords;
-        setLocation(currentLocation);
-
-        // --- LÓGICA DE ACTUALIZACIÓN DE RUTA ---
-        const now = Date.now();
-        if (now - lastRouteFetchTime.current > ROUTE_REFETCH_INTERVAL) {
-          fetchRoute(currentLocation, order.destination);
-          lastRouteFetchTime.current = now;
+    // 2. Crear Canal de Notificación (Android) - Ejecutar solo una vez
+    useEffect(() => {
+        if (Platform.OS === 'android') {
+            Notifications.setNotificationChannelAsync('delivery-channel', {
+                name: 'Alertas de Entrega',
+                importance: Notifications.AndroidImportance.MAX, // 🔥 IMPORTANTE: MAX para banner flotante
+                vibrationPattern: [0, 250, 250, 250],
+                lightColor: '#FF231F7C',
+                sound: 'default',
+                enableVibrate: true,
+            });
         }
-        // --- FIN DE LA LÓGICA ---
+    }, []);
 
-        if (mapRef.current) {
-          mapRef.current.animateToRegion({
-            latitude: currentLocation.latitude,
-            longitude: currentLocation.longitude,
-            latitudeDelta: 0.01,
-            longitudeDelta: 0.01,
-          }, 1000);
-        }
+    const sendProximityNotification = async () => {
+        console.log("🔔 Enviando notificación de llegada...");
 
-        socket.emit('updateLocation', {
-          orderId: order.id,
-          coords: currentLocation,
+        await Notifications.scheduleNotificationAsync({
+            content: {
+                title: "📍 ¡Llegaste al Destino!",
+                body: `Estás en el punto de entrega de ${order.cliente?.nombre || 'el cliente'}.`,
+                data: { orderId: order.id },
+                sound: true, // Sonido por defecto
+                // 🔥 CLAVE: Asignar el canal de prioridad máxima creado arriba
+                color: '#FF6600',
+                vibrate: [0, 250, 250, 250],
+            },
+            trigger: {
+                channelId: 'delivery-channel', // 🔥 Vincular con el canal configurado
+                seconds: 1 // Disparar casi inmediatamente
+            },
         });
+    };
 
-        const distance = getDistance(currentLocation, order.destination);
-        if (distance < PROXIMITY_THRESHOLD && !isAlertShown) {
-          sendProximityNotification();
-          setIsAlertShown(true);
+    const fetchRoute = async (origin, dest) => {
+        if (!GOOGLE_MAPS_API_KEY || !dest) return;
+
+        try {
+            const response = await fetch(
+                `https://maps.googleapis.com/maps/api/directions/json?origin=${origin.latitude},${origin.longitude}&destination=${dest.latitude},${dest.longitude}&key=${GOOGLE_MAPS_API_KEY}`
+            );
+            const json = await response.json();
+
+            if (json.status === 'OK' && json.routes.length > 0) {
+                const points = polyline.decode(json.routes[0].overview_polyline.points);
+                const coords = points.map(point => ({
+                    latitude: point[0],
+                    longitude: point[1],
+                }));
+                setRouteCoordinates(coords);
+
+                if (json.routes[0].legs && json.routes[0].legs[0].distance) {
+                    setRouteDistance(json.routes[0].legs[0].distance.text);
+                }
+            } else {
+                console.warn(`⚠️ Error API Rutas: ${json.status}`);
+            }
+        } catch (error) {
+            console.error("❌ Error obteniendo ruta:", error);
         }
-      });
     };
 
-    socket.on('connect', () => {
-      socket.emit('joinOrderRoom', order.id);
-    });
+    // Efecto inicial para cargar ruta si ya hay datos
+    useEffect(() => {
+        if (location && destination) {
+            fetchRoute(location, destination);
+        }
+    }, [destination]); // Solo si cambia el destino (o al cargar ubicación inicial abajo)
 
-    startTracking();
+    useEffect(() => {
+        let locationSubscription = null;
 
-    return () => {
-      socket.disconnect();
-      if (locationSubscription) {
-        locationSubscription.remove();
-      }
-    };
-  }, [order.id]);
+        const initSocketAndTracking = async () => {
+            // Socket
+            const token = await AsyncStorage.getItem('token');
+            socketRef.current = io(SOCKET_URL, {
+                auth: { token },
+                transports: ['websocket'],
+            });
 
-  if (errorMsg) {
-    return <View style={styles.loadingContainer}><Text>{errorMsg}</Text></View>;
-  }
+            socketRef.current.on('connect', () => {
+                console.log("Socket conectado:", socketRef.current.id);
+                socketRef.current.emit('start_tracking', { orderId: order.id });
+            });
 
-  if (!location) {
+            socketRef.current.on('orden:tracking_started', (data) => {
+                if (data.destination) {
+                    setDestination(data.destination);
+                }
+            });
+
+            // Permisos
+            const { status } = await Location.requestForegroundPermissionsAsync();
+            if (status !== 'granted') {
+                setErrorMsg('Permiso de ubicación denegado');
+                return;
+            }
+
+            // Permisos Notificaciones
+            await Notifications.requestPermissionsAsync();
+
+            // Ubicación Inicial
+            let initialLocation = await Location.getLastKnownPositionAsync({});
+            if (!initialLocation) {
+                initialLocation = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
+            }
+
+            if (initialLocation) {
+                setLocation(initialLocation.coords);
+                if (destination) {
+                    fetchRoute(initialLocation.coords, destination);
+                    lastRouteFetchTime.current = Date.now();
+                }
+            }
+
+            // Tracking en tiempo real
+            locationSubscription = await Location.watchPositionAsync({
+                accuracy: Location.Accuracy.High,
+                timeInterval: 4000,
+                distanceInterval: 10,
+            }, (newLocation) => {
+                const currentLocation = newLocation.coords;
+                setLocation(currentLocation);
+
+                // Actualizar ruta cada cierto tiempo
+                const now = Date.now();
+                if (destination && now - lastRouteFetchTime.current > ROUTE_REFETCH_INTERVAL) {
+                    fetchRoute(currentLocation, destination);
+                    lastRouteFetchTime.current = now;
+                }
+
+                // Mover cámara
+                mapRef.current?.animateToRegion({
+                    latitude: currentLocation.latitude,
+                    longitude: currentLocation.longitude,
+                    latitudeDelta: 0.015,
+                    longitudeDelta: 0.015,
+                }, 1000);
+
+                // Emitir socket
+                socketRef.current?.emit('location_update', {
+                    orderId: order.id,
+                    coords: currentLocation,
+                });
+
+                // Verificar llegada
+                if (destination) {
+                    const distance = getDistance(currentLocation, destination);
+                    if (distance < PROXIMITY_THRESHOLD && !isAlertShown) {
+                        sendProximityNotification();
+                        setIsAlertShown(true);
+                    }
+                }
+            });
+        };
+
+        initSocketAndTracking();
+
+        return () => {
+            socketRef.current?.disconnect();
+            locationSubscription?.remove();
+        };
+    }, [order.id]);
+
+    if (errorMsg) return <View style={styles.center}><Text>{errorMsg}</Text></View>;
+    if (!location) return <View style={styles.center}><ActivityIndicator size="large" color="#FF6600" /></View>;
+
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#FF6600" />
-        <Text>Obteniendo ubicación inicial...</Text>
-      </View>
+        <View style={styles.container}>
+            <MapView
+                ref={mapRef}
+                provider={PROVIDER_GOOGLE}
+                style={styles.map}
+                initialRegion={{
+                    latitude: location.latitude,
+                    longitude: location.longitude,
+                    latitudeDelta: 0.015,
+                    longitudeDelta: 0.015,
+                }}
+                showsUserLocation={true}
+                showsMyLocationButton={true}
+            >
+                {destination && (
+                    <Marker
+                        coordinate={destination}
+                        title="Destino"
+                        description={order.direccion_entrega}
+                        pinColor="#1E90FF"
+                    />
+                )}
+
+                {routeCoordinates.length > 0 && (
+                    <Polyline
+                        coordinates={routeCoordinates}
+                        strokeColor="#FF6600"
+                        strokeWidth={5}
+                        zIndex={1} // Asegura que esté encima del mapa
+                    />
+                )}
+            </MapView>
+
+            <TouchableOpacity
+                style={styles.backButton}
+                onPress={() => navigation.navigate('RepartidorDashboard')}
+            >
+                <MaterialIcons name="arrow-back" size={24} color="#333" />
+            </TouchableOpacity>
+
+            <View style={styles.infoBox}>
+                <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+                    <View style={{flex: 1}}>
+                        <Text style={styles.title}>
+                            Entregar a: {order.cliente?.nombre || 'Cliente'}
+                        </Text>
+                        <Text style={styles.address} numberOfLines={2}>
+                            {order.direccion_entrega}
+                        </Text>
+                        {routeDistance && (
+                            <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 5}}>
+                                <MaterialIcons name="linear-scale" size={16} color="#666" />
+                                <Text style={styles.distanceText}> Distancia: {routeDistance}</Text>
+                            </View>
+                        )}
+                    </View>
+                    <View style={styles.iconContainer}>
+                        <MaterialIcons name="delivery-dining" size={30} color="#FF6600" />
+                    </View>
+                </View>
+            </View>
+        </View>
     );
-  }
-
-  return (
-    <View style={styles.container}>
-      <MapView
-        ref={mapRef}
-        style={styles.map}
-        initialRegion={{
-          latitude: location.latitude,
-          longitude: location.longitude,
-          latitudeDelta: 0.02,
-          longitudeDelta: 0.02,
-        }}
-        showsUserLocation={true}
-      >
-        {order.destination && (
-          <Marker
-            coordinate={order.destination}
-            title="Destino"
-            description={order.direccion_entrega}
-            pinColor="#1E90FF"
-          />
-        )}
-        <Polyline
-          coordinates={routeCoordinates}
-          strokeColor="#FF6600"
-          strokeWidth={5}
-        />
-      </MapView>
-
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('RepartidorDashboard')}>
-        <MaterialIcons name="arrow-back" size={28} color="#333" />
-      </TouchableOpacity>
-
-      <View style={styles.infoBox}>
-        <Text style={styles.title}>Entregar a: {order.cliente.nombre}</Text>
-        <Text style={styles.address}>{order.direccion_entrega}</Text>
-      </View>
-    </View>
-  );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  map: { width: '100%', height: '100%' },
-  backButton: {
-    position: 'absolute',
-    top: 50,
-    left: 15,
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-    borderRadius: 20,
-    padding: 6,
-    elevation: 5,
-  },
-  infoBox: {
-    position: 'absolute',
-    bottom: 20,
-    left: 15,
-    right: 15,
-    backgroundColor: 'white',
-    padding: 16,
-    borderRadius: 12,
-    elevation: 5,
-  },
-  title: { fontSize: 18, fontWeight: 'bold', marginBottom: 4 },
-  address: { fontSize: 14, color: '#666' }
+    container: { flex: 1, backgroundColor: '#fff' },
+    center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+    map: { width: '100%', height: '100%' },
+    backButton: {
+        position: 'absolute', top: Platform.OS === 'ios' ? 50 : 40, left: 20,
+        backgroundColor: 'white', borderRadius: 25, padding: 8, elevation: 5, zIndex: 10
+    },
+    infoBox: {
+        position: 'absolute', bottom: 30, left: 20, right: 20,
+        backgroundColor: 'white', padding: 20, borderRadius: 15, elevation: 10
+    },
+    title: { fontSize: 16, fontWeight: 'bold', color: '#333', marginBottom: 4 },
+    address: { fontSize: 14, color: '#666' },
+    distanceText: { fontSize: 14, color: '#FF6600', fontWeight: 'bold' },
+    iconContainer: { backgroundColor: '#FFF0E6', padding: 10, borderRadius: 50, marginLeft: 10 }
 });
