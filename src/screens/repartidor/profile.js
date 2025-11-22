@@ -21,7 +21,9 @@ export default function RepartidorProfile({ navigation }) {
     const handleLogout = async () => {
         try {
             await AsyncStorage.multiRemove(['token', 'usuario', 'token_timestamp']);
-            navigation.replace('Login');
+            if (navigation.canGoBack()) {
+                navigation.goBack();
+            }
         } catch (error) {
             console.error('Error al cerrar sesión:', error);
         }
@@ -59,7 +61,7 @@ export default function RepartidorProfile({ navigation }) {
                     <TouchableOpacity
                         key={index}
                         style={styles.menuItem}
-                        onPress={item.action}
+                        onPress={() => item.action && item.action()}
                     >
                         <View style={styles.menuLeft}>
                             <MaterialIcons name={item.icon} size={24} color="#FF6600" />

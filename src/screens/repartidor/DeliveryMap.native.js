@@ -11,10 +11,9 @@ import { API_URL, GOOGLE_MAPS_API_KEY } from '../../config';
 import { MaterialIcons } from '@expo/vector-icons';
 
 const SOCKET_URL = API_URL.replace('/api', '');
-const PROXIMITY_THRESHOLD = 50; // 50 metros
-const ROUTE_REFETCH_INTERVAL = 15000;
+const PROXIMITY_THRESHOLD = 30;
+const ROUTE_REFETCH_INTERVAL = 1000; // 1 segundo para actualización fluida
 
-// 1. Configuración global de notificaciones
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
         shouldShowAlert: true,
@@ -29,20 +28,24 @@ export default function DeliveryMap({ route, navigation }) {
     const [destination, setDestination] = useState(order.destination || null);
     const [location, setLocation] = useState(null);
     const [errorMsg, setErrorMsg] = useState(null);
-    const [isAlertShown, setIsAlertShown] = useState(false);
+    const isAlertShown = useRef(false);
     const [routeCoordinates, setRouteCoordinates] = useState([]);
     const [routeDistance, setRouteDistance] = useState(null);
 
     const mapRef = useRef(null);
     const lastRouteFetchTime = useRef(0);
     const socketRef = useRef(null);
+    const destinationRef = useRef(destination);
+    useEffect(() => {
+        destinationRef.current = destination;
+    }, [destination]);
 
-    // 2. Crear Canal de Notificación (Android) - Ejecutar solo una vez
+    // Canal de Notificación (Android)
     useEffect(() => {
         if (Platform.OS === 'android') {
             Notifications.setNotificationChannelAsync('delivery-channel', {
                 name: 'Alertas de Entrega',
-                importance: Notifications.AndroidImportance.MAX, // 🔥 IMPORTANTE: MAX para banner flotante
+                importance: Notifications.AndroidImportance.MAX,
                 vibrationPattern: [0, 250, 250, 250],
                 lightColor: '#FF231F7C',
                 sound: 'default',
@@ -52,28 +55,26 @@ export default function DeliveryMap({ route, navigation }) {
     }, []);
 
     const sendProximityNotification = async () => {
-        console.log("🔔 Enviando notificación de llegada...");
+        console.log("🔔 Enviando notificación única de llegada...");
 
         await Notifications.scheduleNotificationAsync({
             content: {
                 title: "📍 ¡Llegaste al Destino!",
                 body: `Estás en el punto de entrega de ${order.cliente?.nombre || 'el cliente'}.`,
                 data: { orderId: order.id },
-                sound: true, // Sonido por defecto
-                // 🔥 CLAVE: Asignar el canal de prioridad máxima creado arriba
+                sound: true,
                 color: '#FF6600',
                 vibrate: [0, 250, 250, 250],
             },
             trigger: {
-                channelId: 'delivery-channel', // 🔥 Vincular con el canal configurado
-                seconds: 1 // Disparar casi inmediatamente
+                channelId: 'delivery-channel',
+                seconds: null
             },
         });
     };
 
     const fetchRoute = async (origin, dest) => {
         if (!GOOGLE_MAPS_API_KEY || !dest) return;
-
         try {
             const response = await fetch(
                 `https://maps.googleapis.com/maps/api/directions/json?origin=${origin.latitude},${origin.longitude}&destination=${dest.latitude},${dest.longitude}&key=${GOOGLE_MAPS_API_KEY}`
@@ -91,26 +92,25 @@ export default function DeliveryMap({ route, navigation }) {
                 if (json.routes[0].legs && json.routes[0].legs[0].distance) {
                     setRouteDistance(json.routes[0].legs[0].distance.text);
                 }
-            } else {
-                console.warn(`⚠️ Error API Rutas: ${json.status}`);
             }
         } catch (error) {
-            console.error("❌ Error obteniendo ruta:", error);
+            console.error("❌ Error ruta:", error);
         }
     };
 
-    // Efecto inicial para cargar ruta si ya hay datos
     useEffect(() => {
         if (location && destination) {
             fetchRoute(location, destination);
         }
-    }, [destination]); // Solo si cambia el destino (o al cargar ubicación inicial abajo)
+    }, [destination]);
 
     useEffect(() => {
         let locationSubscription = null;
 
         const initSocketAndTracking = async () => {
-            // Socket
+            // Resetear alerta al iniciar tracking de una orden
+            isAlertShown.current = false;
+
             const token = await AsyncStorage.getItem('token');
             socketRef.current = io(SOCKET_URL, {
                 auth: { token },
@@ -128,17 +128,14 @@ export default function DeliveryMap({ route, navigation }) {
                 }
             });
 
-            // Permisos
             const { status } = await Location.requestForegroundPermissionsAsync();
             if (status !== 'granted') {
                 setErrorMsg('Permiso de ubicación denegado');
                 return;
             }
 
-            // Permisos Notificaciones
             await Notifications.requestPermissionsAsync();
 
-            // Ubicación Inicial
             let initialLocation = await Location.getLastKnownPositionAsync({});
             if (!initialLocation) {
                 initialLocation = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
@@ -146,29 +143,26 @@ export default function DeliveryMap({ route, navigation }) {
 
             if (initialLocation) {
                 setLocation(initialLocation.coords);
-                if (destination) {
-                    fetchRoute(initialLocation.coords, destination);
+                if (destinationRef.current) {
+                    fetchRoute(initialLocation.coords, destinationRef.current);
                     lastRouteFetchTime.current = Date.now();
                 }
             }
 
-            // Tracking en tiempo real
             locationSubscription = await Location.watchPositionAsync({
-                accuracy: Location.Accuracy.High,
-                timeInterval: 4000,
-                distanceInterval: 10,
+                accuracy: Location.Accuracy.BestForNavigation,
+                timeInterval: 2000,
+                distanceInterval: 2,
             }, (newLocation) => {
                 const currentLocation = newLocation.coords;
                 setLocation(currentLocation);
 
-                // Actualizar ruta cada cierto tiempo
                 const now = Date.now();
-                if (destination && now - lastRouteFetchTime.current > ROUTE_REFETCH_INTERVAL) {
-                    fetchRoute(currentLocation, destination);
+                if (destinationRef.current && now - lastRouteFetchTime.current > ROUTE_REFETCH_INTERVAL) {
+                    fetchRoute(currentLocation, destinationRef.current);
                     lastRouteFetchTime.current = now;
                 }
 
-                // Mover cámara
                 mapRef.current?.animateToRegion({
                     latitude: currentLocation.latitude,
                     longitude: currentLocation.longitude,
@@ -176,18 +170,17 @@ export default function DeliveryMap({ route, navigation }) {
                     longitudeDelta: 0.015,
                 }, 1000);
 
-                // Emitir socket
                 socketRef.current?.emit('location_update', {
                     orderId: order.id,
                     coords: currentLocation,
                 });
 
-                // Verificar llegada
-                if (destination) {
-                    const distance = getDistance(currentLocation, destination);
-                    if (distance < PROXIMITY_THRESHOLD && !isAlertShown) {
+                //  LÓGICA  DE ALERTA
+                if (destinationRef.current) {
+                    const distance = getDistance(currentLocation, destinationRef.current);
+                    if (distance < PROXIMITY_THRESHOLD && !isAlertShown.current) {
                         sendProximityNotification();
-                        setIsAlertShown(true);
+                        isAlertShown.current = true;
                     }
                 }
             });
@@ -227,13 +220,12 @@ export default function DeliveryMap({ route, navigation }) {
                         pinColor="#1E90FF"
                     />
                 )}
-
                 {routeCoordinates.length > 0 && (
                     <Polyline
                         coordinates={routeCoordinates}
                         strokeColor="#FF6600"
-                        strokeWidth={5}
-                        zIndex={1} // Asegura que esté encima del mapa
+                        strokeWidth={6}
+                        zIndex={1}
                     />
                 )}
             </MapView>
