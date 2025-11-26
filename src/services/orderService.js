@@ -148,3 +148,41 @@ export const getOrdenesRestaurante = async () => {
     return [];
   }
 };
+// ... tus otras funciones ...
+
+// --- GESTIÓN DE REPARTIDORES ---
+
+export const crearRepartidor = async (datos) => {
+  try {
+    const headers = await getHeaders();
+    const response = await fetch(`${API_URL}/usuarios/repartidores`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(datos)
+    });
+    return await response.json();
+  } catch (error) { return { error: "Error de conexión" }; }
+};
+
+export const editarRepartidor = async (id, datos) => {
+  try {
+    const headers = await getHeaders();
+    const response = await fetch(`${API_URL}/usuarios/repartidores/${id}`, {
+      method: 'PUT',
+      headers,
+      body: JSON.stringify(datos)
+    });
+    return await response.json();
+  } catch (error) { return { error: "Error de conexión" }; }
+};
+
+export const eliminarRepartidor = async (id) => {
+  try {
+    const headers = await getHeaders();
+    const response = await fetch(`${API_URL}/usuarios/repartidores/${id}`, {
+      method: 'DELETE',
+      headers
+    });
+    return await response.json();
+  } catch (error) { return { error: "Error de conexión" }; }
+};
