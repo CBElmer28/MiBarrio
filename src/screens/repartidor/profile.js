@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import { CommonActions } from '@react-navigation/native';
 import BackArrow from '../../components/ui/backarrow';
 
 export default function RepartidorProfile({ navigation }) {
@@ -9,10 +10,14 @@ export default function RepartidorProfile({ navigation }) {
 
     useEffect(() => {
         const fetchUserName = async () => {
-            const usuarioStr = await AsyncStorage.getItem('usuario');
-            if (usuarioStr) {
-                const usuario = JSON.parse(usuarioStr);
-                setUserName(usuario.nombre || 'Repartidor');
+            try {
+                const usuarioStr = await AsyncStorage.getItem('usuario');
+                if (usuarioStr) {
+                    const usuario = JSON.parse(usuarioStr);
+                    setUserName(usuario.nombre || 'Repartidor');
+                }
+            } catch (e) {
+                console.error("Error al cargar usuario:", e);
             }
         };
         fetchUserName();
@@ -20,10 +25,16 @@ export default function RepartidorProfile({ navigation }) {
 
     const handleLogout = async () => {
         try {
+            // 1. Borrar todos los datos de sesión
             await AsyncStorage.multiRemove(['token', 'usuario', 'token_timestamp']);
-            if (navigation.canGoBack()) {
-                navigation.goBack();
-            }
+
+            // 2. Resetear la navegación e ir al Login
+            navigation.dispatch(
+                CommonActions.reset({
+                    index: 0,
+                    routes: [{ name: 'Login' }],
+                })
+            );
         } catch (error) {
             console.error('Error al cerrar sesión:', error);
         }
