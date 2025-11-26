@@ -1,5 +1,4 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-// 👇 AQUÍ USAMOS TU CONFIGURACIÓN EXISTENTE
 import { API_URL } from '../config'; 
 
 // Función auxiliar para obtener el Token
@@ -11,13 +10,13 @@ const getHeaders = async () => {
   };
 };
 
-// 🆕 CREAR ORDEN (Cliente)
+// CREAR ORDEN (Cliente)
 export const crearOrden = async (orderData) => {
   try {
     const headers = await getHeaders();
     console.log("📤 Enviando orden:", JSON.stringify(orderData));
     
-    const response = await fetch(`${API_URL}/orden`, { // Asegúrate que la ruta coincida con app.js
+    const response = await fetch(`${API_URL}/orden`, {
       method: 'POST',
       headers: headers,
       body: JSON.stringify(orderData)
@@ -62,7 +61,7 @@ export const asignarOrden = async (idOrden, idRepartidor) => {
     const response = await fetch(`${API_URL}/orden/${idOrden}/asignar-repartidor`, {
       method: 'PUT',
       headers: headers,
-      body: JSON.stringify({ repartidor_id: idRepartidor }) // Tu back pide repartidor_id
+      body: JSON.stringify({ repartidor_id: idRepartidor })
     });
 
     if (response.ok) {
@@ -108,7 +107,18 @@ export const marcarOrdenEntregada = async (idOrden) => {
   }
 };
 
-// Cambiar solo el estado (sin asignar repartidor)
+// 5. Obtener historial de pedidos del CLIENTE
+export const getMisOrdenesCliente = async () => {
+    try {
+        const headers = await getHeaders();
+        const response = await fetch(`${API_URL}/orden/cliente/mis-ordenes`, { method: 'GET', headers });
+        return response.ok ? await response.json() : [];
+    } catch (error) {
+        console.error("Error obteniendo mis órdenes:", error);
+        return [];
+    }
+};
+// 6. Cambiar estado de una orden (Cocinero)
 export const cambiarEstadoOrden = async (idOrden, nuevoEstado) => {
   try {
     const headers = await getHeaders();
@@ -124,11 +134,11 @@ export const cambiarEstadoOrden = async (idOrden, nuevoEstado) => {
     return null;
   }
 };
-// (Llama a la ruta: GET /api/orden que va a ordenController.listarOrdenes)
+// 7. Obtener todas las órdenes del restaurante (Cocinero)
 export const getOrdenesRestaurante = async () => {
   try {
     const headers = await getHeaders();
-    const response = await fetch(`${API_URL}/orden`, { // Ojo: revisa si en tu app.js es /api/orden o /api/ordenes
+    const response = await fetch(`${API_URL}/orden`, {
       method: 'GET',
       headers: headers
     });
