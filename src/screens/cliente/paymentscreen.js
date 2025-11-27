@@ -86,14 +86,12 @@ export default function PaymentScreen() {
         }
 
         // 2. Datos de la Orden
-        const restauranteId = items[0]?.restaurante_id || 4; // Fallback a 4 si no viene en el item
-        
+        const restauranteId = items[0]?.restaurante_id || 4;
+
         const orderData = {
             cliente_id: userId,
-            restaurante_id: restauranteId, 
+            restaurante_id: restauranteId,
             direccion_entrega: address,
-            // Aquí podrías enviar también el id del método de pago si tu backend lo pide
-            // metodo_pago_id: selectedCard.id_bd, 
             items: items.map(i => ({
                 platillo_id: i.id,
                 cantidad: i.qty || i.quantity || 1
@@ -104,15 +102,15 @@ export default function PaymentScreen() {
         const result = await crearOrden(orderData);
         setLoading(false);
 
-        if (result && result.orden_id) { // Ajusta según la respuesta de tu backend (orden_id o success)
-            setCreatedOrder(result);
+        // --- CORRECCIÓN AQUÍ ---
+        // Verificamos 'result.success' que es lo que devuelve tu orderService
+        if (result.success) {
+            setCreatedOrder(result.orden); // Guardamos la orden retornada
             setSuccessVisible(true);
-        } else if (result && result.message) {
-             // Caso backup si tu backend responde con message
-             setCreatedOrder(result);
-             setSuccessVisible(true);
         } else {
-            Alert.alert("Error", "No se pudo procesar el pedido.");
+            // Si falla, mostramos el error que viene del servicio o un genérico
+            const errorMsg = result.error || "No se pudo procesar el pedido.";
+            Alert.alert("Error", errorMsg);
         }
     };
 

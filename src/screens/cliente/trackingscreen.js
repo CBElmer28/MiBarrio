@@ -183,17 +183,7 @@ export default function TrackingScreen() {
             {/* Header con Navegación Segura */}
             <View style={categorystyles.headerContainer}>
                 <TouchableOpacity
-                    onPress={() => {
-                        if (navigation.canGoBack()) {
-                            navigation.goBack();
-                        } else {
-                            // Navegación explícita a la lista de pedidos
-                            navigation.navigate('Main', {
-                                screen: 'Menu',
-                                params: { screen: 'Orders' }
-                            });
-                        }
-                    }}
+                    onPress={() => navigation.navigate('Main', { screen: 'Orders' })}
                     style={categorystyles.iconButton}
                 >
                     <Image source={require('../../../assets/icons/Back.png')} style={categorystyles.headerIcon} />
