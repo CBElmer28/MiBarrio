@@ -15,8 +15,8 @@ import ConfigScreen from "../../screens/cocinero/settings";
 import EditProfileScreen from "../../screens/cocinero/editprofile";
 import WithdrawScreen from "../../screens/cocinero/withdraw";
 
-
-
+// 👇 1. IMPORTAMOS LA NUEVA PANTALLA
+import VRepartidor from "../../screens/cocinero/vRepartidor"; 
 
 const Stack = createNativeStackNavigator();
 
@@ -24,7 +24,7 @@ const CocineroStack = () => {
   return (
     <Stack.Navigator
       screenOptions={{
-        headerShown: false, // usamos headers personalizados como en las vistas
+        headerShown: false, 
       }}
     >
       <Stack.Screen
@@ -63,6 +63,12 @@ const CocineroStack = () => {
       <Stack.Screen 
         name="CocineroWithdraw" 
         component={WithdrawScreen} />
+
+      {/* 👇 2. AGREGAMOS LA RUTA AQUI */}
+      <Stack.Screen 
+        name="CocineroRepartidores" 
+        component={VRepartidor} 
+      />
 
     </Stack.Navigator>
   );
