@@ -1,192 +1,266 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
 
 export default StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f9f9f9',
-    padding: 20,
+    backgroundColor: '#F9FAFB', // Fondo blanco sucio muy limpio
   },
-  header: {
-    fontSize: 14,
-    color: '#555',
-  },
-  greeting: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginVertical: 10,
+  
+  // --- HEADER PREMIUM ---
+  headerContainer: {
+    backgroundColor: '#FFF',
+    paddingTop: Platform.OS === 'android' ? 50 : 60,
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
+    // Sombra del header
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 10,
+    zIndex: 100,
   },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 5,
+    justifyContent: 'space-between',
   },
+  // Botón Menú (Círculo gris suave)
   menuButton: {
-    marginRight: 10,
-    padding: 4,
+    backgroundColor: '#F5F6FA',
+    padding: 10,
+    borderRadius: 14,
   },
+  // Textos del Header
+  greeting: {
+    fontSize: 24,
+    fontWeight: '800',
+    color: '#1a1d2e',
+    marginTop: 15,
+  },
+  headerLabel: {
+    fontSize: 12,
+    color: '#FF6600',
+    fontWeight: '700',
+    letterSpacing: 1,
+    textTransform: 'uppercase',
+  },
+  headerLocation: {
+    fontSize: 15,
+    color: '#333',
+    fontWeight: '600',
+  },
+
+  // --- BUSCADOR FLOTANTE ---
   searchInput: {
-    backgroundColor: '#fff',
-    padding: 12,
-    borderRadius: 8,
-    borderColor: '#ddd',
-    borderWidth: 1,
-    marginBottom: 15,
+    backgroundColor: '#FFF',
+    marginHorizontal: 20,
+    marginTop: 20,
+    marginBottom: 10,
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    borderRadius: 18,
+    fontSize: 15,
+    color: '#333',
+    // Sombra flotante
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.06,
+    shadowRadius: 10,
+    elevation: 4,
   },
+
+  // --- FILTROS (PILLS) ---
   filters: {
-    marginVertical: 10,
-    paddingBottom: 10,
-    marginTop: -4,
+    paddingLeft: 20,
+    paddingVertical: 15,
   },
   filterButton: {
-    height: 36,
-    minWidth: 90,
-    paddingHorizontal: 12,
-    marginRight: 8,
-    borderRadius: 18,
-    backgroundColor: '#f5f5f5',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  filterButtonText: {
-    fontSize: 14,
-    color: '#333',
-    fontWeight: '500',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    marginRight: 10,
+    borderRadius: 25,
+    backgroundColor: '#FFF',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowOffset: { width: 0, height: 2 },
   },
   activeFilterButton: {
     backgroundColor: '#FF6600',
+    elevation: 5,
+    shadowColor: '#FF6600',
+    shadowOpacity: 0.3,
+  },
+  filterButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#888',
   },
   activeFilterButtonText: {
-    color: '#fff',
+    color: '#FFF',
+    fontWeight: '700',
   },
+
+  // --- TITULOS ---
   sectionTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 10,
-  },
+    fontSize: 20,
+    fontWeight: '800',
+    color: '#1a1d2e',
+    marginLeft: 20,
+},
+
+  // --- TARJETAS GENÉRICAS (Base) ---
   cardBase: {
-    backgroundColor: '#fff',
-    borderRadius: 20,
-    overflow: 'hidden',
+    backgroundColor: '#FFF',
+    borderRadius: 22,
+    // Sombra unificada
     shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 3,
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.08,
+    shadowRadius: 15,
+    elevation: 4,
+    borderWidth: 0, // Adiós bordes
   },
+
+  // --- RESTAURANTE (Vertical) ---
   restaurantCard: {
-    borderRadius: 12,
-    marginBottom: 20,
+    marginHorizontal: 20,
+    marginBottom: 25,
   },
   restaurantImage: {
     width: '100%',
     height: 180,
+    borderTopLeftRadius: 22,
+    borderTopRightRadius: 22,
     resizeMode: 'cover',
+  },
+  restaurantInfoContent: {
+    padding: 15,
   },
   restaurantName: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginTop: 8,
-    paddingHorizontal: 10,
+    color: '#333',
+    marginBottom: 5,
   },
   categories: {
-    fontSize: 14,
-    color: '#666',
-    paddingHorizontal: 10,
-    marginBottom: 6,
+    fontSize: 13,
+    color: '#999',
+    marginBottom: 10,
   },
   infoRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    marginTop: 4,
+    gap: 15,
   },
   infoItem: {
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  icon: {
-    width: 16,
-    height: 16,
-    marginRight: 4,
-    resizeMode: 'contain',
+    backgroundColor: '#F5F6FA',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
   },
   infoText: {
-    fontSize: 13,
+    fontSize: 12,
+    fontWeight: '600',
     color: '#555',
+    marginLeft: 4,
   },
+  icon: {
+    width: 14,
+    height: 14,
+    tintColor: '#FF6600',
+  },
+
+  // --- COMIDA (Horizontal) ---
   foodCard: {
-  width: 160,
-  height: 220,
-  backgroundColor: '#fff',
-  borderRadius: 12,
-  marginRight: 14, 
-  overflow: 'hidden',
-  position: 'relative',
-  elevation: 3, 
-  shadowColor: '#000',
-  shadowOpacity: 0.1,
-  shadowRadius: 4,
-  shadowOffset: { width: 0, height: 2 },
-},
-  foodImage: {
-  width: '100%',
-  height: 140,
-  borderTopLeftRadius: 12,
-  borderTopRightRadius: 12,
-},
-  foodContent: {
-  flex: 1,
-  padding: 10,
-  justifyContent: 'flex-start',
-},
-
-  foodName: {
-  fontSize: 16,
-  fontWeight: '600',
-  color: '#333',
-  marginBottom: 6,
-  lineHeight: 18,
-},
-foodPrice: {
-  fontSize: 15,
-  fontWeight: 'bold',
-  color: '#FF6600',
-  position: 'absolute',
-  bottom: 10,
-  left: 10,
-},
-  foodDetails: {
-    color: '#666',
-    fontSize: 13,
+    width: 170,
+    height: 230,
+    marginLeft: 20, // Margen solo a la izquierda para el scroll
+    marginRight: 5,
+    marginBottom: 20, // Espacio para sombra
   },
-  foodInfoRow: {
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  marginBottom: 8,
+  foodImage: {
+    width: '100%',
+    height: 130,
+    borderTopLeftRadius: 22,
+    borderTopRightRadius: 22,
+  },
+  foodContent: {
+    padding: 12,
+    flex: 1,
+    justifyContent: 'space-between',
+  },
+  foodName: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#333',
+    lineHeight: 18,
+  },
+  foodPrice: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: '#FF6600',
+  },
+  addButton: {
+    position: 'absolute',
+    bottom: 10,
+    right: 10,
+    backgroundColor: '#FF6600',
+    width: 32,
+    height: 32,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 3,
+  },
+  addButtonText: {
+    color: '#fff',
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginTop: -2,
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFF',
+    marginHorizontal: 20,
+    marginTop: 20,
+    marginBottom: 10,
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    borderRadius: 18,
+    // Sombra flotante
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.06,
+    shadowRadius: 10,
+    elevation: 4,
+    justifyContent: 'space-between'
 },
-addButton: {
-  position: 'absolute',
-  bottom: 10,
-  right: 10,
-  backgroundColor: '#FF6600',
-  width: 36,
-  height: 36,
-  borderRadius: 18,
-  justifyContent: 'center',
-  alignItems: 'center',
-  elevation: 4, // Android shadow
-  shadowColor: '#000', // iOS shadow
-  shadowOpacity: 0.2,
-  shadowRadius: 4,
-  shadowOffset: { width: 0, height: 2 },
+searchPlaceholder: {
+    color: '#999',
+    fontSize: 15,
 },
 
-addButtonText: {
-  color: '#fff',
-  fontSize: 22,
-  fontWeight: 'bold',
-  lineHeight: 22,
+// Header de Sección (Categorías, Populares, etc.)
+sectionHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginRight: 20, // Margen derecho para el botón "Ver todo"
+    marginTop: 15,
+    marginBottom: 10,
 },
+seeAllText: {
+    fontSize: 13,
+    color: '#FF6600',
+    fontWeight: '600',
+},
+
+  
 });

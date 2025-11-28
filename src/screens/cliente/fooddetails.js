@@ -1,253 +1,228 @@
-// src/screens/fooddetails.js
-import React, { useState, useContext } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useState, useContext, useEffect } from 'react';
+import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, Dimensions, StatusBar } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { CartContext } from '../../context/CartContext';
-import categorystyles from '../../styles/CategoryStyles';
+import { Ionicons } from '@expo/vector-icons';
+
+// Asegúrate de tener este servicio creado (lo generamos en el paso anterior)
+// Si aún no lo tienes, comenta estas líneas y la lógica de 'isFav'
+import { toggleFavorito, checkEsFavorito } from '../../services/favoritoService';
+
+const { height } = Dimensions.get('window');
 
 export default function FoodDetails() {
   const route = useRoute();
   const navigation = useNavigation();
   const { food } = route.params;
   const { addToCart } = useContext(CartContext);
+  
   const [qty, setQty] = useState(1);
+  const [isFav, setIsFav] = useState(false);
 
-  // 🍔 Ingredientes de hamburguesa
-  const ingredientes = food.ingredients || [
-    "Pan de hamburguesa con sésamo",
-    "Carne de res 200g",
-    "Queso cheddar",
-    "Lechuga fresca",
-    "Tomate",
-    "Cebolla morada",
-    "Pepinillos",
-    "Salsa especial de la casa",
-    "Mayonesa",
-    "Ketchup"
-  ];
+  // 1. Verificar si es favorito al cargar
+  useEffect(() => {
+    const check = async () => {
+      try {
+        // Si no has creado el servicio aún, comenta esto para evitar errores
+        const estado = await checkEsFavorito(food.id);
+        setIsFav(estado);
+      } catch (e) {
+        console.log("Error verificando favorito:", e);
+      }
+    };
+    check();
+  }, [food.id]);
 
+  // 2. Manejar el click en favorito
+  const handleToggleFav = async () => {
+    const nuevoEstado = !isFav;
+    setIsFav(nuevoEstado); // Actualización optimista inmediata
+    await toggleFavorito(food.id);
+  };
+
+  // 3. Agregar al carrito con el ID CORRECTO de restaurante
   const onAdd = () => {
     addToCart({
       id: food.id,
       name: food.nombre,
       price: parseFloat(food.precio),
       image: { uri: food.imagen },
+      // CORRECCIÓN IMPORTANTE: Enviamos el ID real del restaurante
+      restaurante_id: food.restaurante_id || food.restaurante?.id,
       restaurant: food.restaurante?.nombre || null,
     }, qty);
     navigation.navigate('CartScreen');
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-        <Image source={require('../../../assets/icons/Back.png')} style={categorystyles.headerIcon} />
-      </TouchableOpacity>
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
 
-      <Image source={{ uri: food.imagen }} style={styles.image} />
+      {/* --- IMAGEN HERO --- */}
+      <Image source={{ uri: food.imagen }} style={styles.heroImage} />
       
-      <Text style={styles.name}>{food.nombre}</Text>
-      <Text style={styles.price}>Precio: ${food.precio}</Text>
-      <Text style={styles.rating}>Rating: {Number(food.rating)?.toFixed(1) || 'N/A'} ⭐</Text>
+      {/* Capa oscura sutil arriba para que se vean los botones */}
+      <View style={styles.overlayHeader} />
 
-      <View style={styles.divider} />
-
-      <View style={styles.section}>
-  <Text style={styles.sectionTitle}>Categoria</Text>
-  <View style={styles.itemsContainer}>
-    {(food.categorias || []).map((cat, i) => (
-      <View key={i} style={styles.itemRow}>
-        <Text style={styles.bullet}>•</Text>
-        <Text style={styles.itemText}>{cat.nombre}</Text>
-      </View>
-    ))}
-  </View>
-</View>
-
-      <View style={styles.divider} />
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Ingredientes</Text>
-        <View style={styles.itemsContainer}>
-          {ingredientes.map((ingredient, i) => (
-            <View key={i} style={styles.itemRow}>
-              <Text style={styles.bullet}>🍴</Text>
-              <Text style={styles.itemText}>{ingredient}</Text>
-            </View>
-          ))}
-        </View>
-      </View>
-
-      <View style={styles.divider} />
-
-      <View style={styles.qtySection}>
-        <Text style={styles.qtyLabel}>Cantidad:</Text>
-        <View style={styles.qtyRow}>
-          <TouchableOpacity onPress={() => setQty(q => Math.max(1, q - 1))} style={styles.qtyBtn}>
-            <Text style={styles.qtyBtnText}>−</Text>
-          </TouchableOpacity>
-          <Text style={styles.qtyText}>{qty}</Text>
-          <TouchableOpacity onPress={() => setQty(q => q + 1)} style={styles.qtyBtn}>
-            <Text style={styles.qtyBtnText}>+</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      <TouchableOpacity style={styles.button} onPress={onAdd}>
-        <Text style={styles.buttonText}>🛒 Agregar al carrito</Text>
+      {/* Botón Atrás */}
+      <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+        <Ionicons name="arrow-back" size={24} color="#000" />
       </TouchableOpacity>
-    </ScrollView>
+
+      {/* Botón Favorito */}
+      <TouchableOpacity onPress={handleToggleFav} style={styles.favButton}>
+        <Ionicons name={isFav ? "heart" : "heart-outline"} size={24} color={isFav ? "#FF3B30" : "#000"} />
+      </TouchableOpacity>
+
+      {/* --- CONTENIDO (SHEET) --- */}
+      <View style={styles.sheetContainer}>
+        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+            
+            {/* Header: Título y Precio */}
+            <View style={styles.header}>
+                <View style={{flex: 1, marginRight: 10}}>
+                    <Text style={styles.title}>{food.nombre}</Text>
+                    <View style={styles.ratingRow}>
+                        <Ionicons name="star" size={16} color="#FFD700" />
+                        <Text style={styles.ratingText}>
+                            {food.rating ? Number(food.rating).toFixed(1) : '4.5'} (50+ reviews)
+                        </Text>
+                    </View>
+                </View>
+                <Text style={styles.price}>S/ {parseFloat(food.precio).toFixed(2)}</Text>
+            </View>
+
+            {/* Descripción Única */}
+            <Text style={styles.sectionTitle}>Descripción</Text>
+            <Text style={styles.description}>
+                {food.descripcion || "Disfruta de este delicioso platillo preparado con los ingredientes más frescos de la casa. Una experiencia culinaria única lista para ti."}
+            </Text>
+
+            {/* Espacio final */}
+            <View style={{height: 80}} />
+        </ScrollView>
+
+        {/* --- BARRA INFERIOR --- */}
+        <View style={styles.bottomBar}>
+            {/* Contador */}
+            <View style={styles.counter}>
+                <TouchableOpacity onPress={() => setQty(q => Math.max(1, q - 1))} style={styles.counterBtn}>
+                    <Ionicons name="remove" size={20} color="#333" />
+                </TouchableOpacity>
+                <Text style={styles.counterVal}>{qty}</Text>
+                <TouchableOpacity onPress={() => setQty(q => q + 1)} style={styles.counterBtn}>
+                    <Ionicons name="add" size={20} color="#333" />
+                </TouchableOpacity>
+            </View>
+
+            {/* Botón Agregar */}
+            <TouchableOpacity style={styles.addBtn} onPress={onAdd}>
+                <Text style={styles.addBtnText}>Agregar • S/ {(food.precio * qty).toFixed(2)}</Text>
+            </TouchableOpacity>
+        </View>
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { 
-    padding: 20, 
-    backgroundColor: '#F8F9FA',
-    paddingBottom: 40
+  container: { flex: 1, backgroundColor: '#000' },
+  
+  // Hero Image
+  heroImage: {
+    width: '100%',
+    height: height * 0.45, 
+    opacity: 0.9,
+    resizeMode: 'cover',
   },
-  backButton: { 
-    marginBottom: 15,
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center'
+  overlayHeader: {
+    position: 'absolute', top: 0, width: '100%', height: 100,
+    backgroundColor: 'rgba(0,0,0,0.1)'
   },
-  image: { 
-    width: '100%', 
-    height: 250, 
-    borderRadius: 15, 
-    marginBottom: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
-    elevation: 8
+
+  // Botones Flotantes Superiores
+  backButton: {
+    position: 'absolute', top: 50, left: 20,
+    backgroundColor: 'rgba(255,255,255,0.85)',
+    padding: 8, borderRadius: 12, zIndex: 10,
   },
-  name: { 
-    fontSize: 28, 
-    fontWeight: 'bold', 
-    marginBottom: 8,
-    color: '#1A1A1A'
+  favButton: {
+    position: 'absolute', top: 50, right: 20,
+    backgroundColor: 'rgba(255,255,255,0.85)',
+    padding: 8, borderRadius: 12, zIndex: 10,
   },
-  price: { 
-    fontSize: 22, 
-    marginBottom: 5,
-    color: '#FF6600',
-    fontWeight: '700'
-  },
-  rating: { 
-    fontSize: 18, 
-    color: '#666', 
-    marginBottom: 10
-  },
-  divider: {
-    height: 1,
-    backgroundColor: '#E0E0E0',
-    marginVertical: 20
-  },
-  section: {
-    marginBottom: 10
-  },
-  sectionTitle: { 
-    fontSize: 20, 
-    fontWeight: '700', 
-    marginBottom: 12,
-    color: '#2C3E50',
-    letterSpacing: 0.5
-  },
-  itemsContainer: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    padding: 15,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3
-  },
-  itemRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginBottom: 8,
-    paddingVertical: 2
-  },
-  bullet: {
-    fontSize: 18,
-    marginRight: 10,
-    color: '#FF6600',
-    lineHeight: 24
-  },
-  itemText: { 
-    fontSize: 16, 
-    color: '#4A4A4A',
+
+  // Contenedor Blanco Curvo
+  sheetContainer: {
     flex: 1,
-    lineHeight: 24
+    backgroundColor: '#FFF',
+    marginTop: -40, 
+    borderTopLeftRadius: 35,
+    borderTopRightRadius: 35,
+    overflow: 'hidden',
   },
-  qtySection: {
-    alignItems: 'center',
-    marginTop: 10
+  scrollContent: {
+    padding: 25,
   },
-  qtyLabel: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#2C3E50',
-    marginBottom: 12
+
+  // Textos
+  header: {
+    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start',
+    marginBottom: 20,
   },
-  qtyRow: { 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    justifyContent: 'center',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    padding: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3
+  title: {
+    fontSize: 24, fontWeight: '800', color: '#1a1d2e',
+    lineHeight: 30,
   },
-  qtyBtn: { 
-    backgroundColor: '#FF6600', 
-    padding: 12,
-    borderRadius: 10, 
-    marginHorizontal: 20,
-    minWidth: 45,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#FF6600',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 3,
-    elevation: 4
+  price: {
+    fontSize: 22, fontWeight: 'bold', color: '#FF6600',
   },
-  qtyBtnText: { 
-    fontSize: 22, 
-    fontWeight: 'bold',
-    color: '#FFFFFF'
+  ratingRow: {
+    flexDirection: 'row', alignItems: 'center', marginTop: 8,
   },
-  qtyText: { 
-    fontSize: 24, 
-    fontWeight: '700', 
-    minWidth: 40, 
-    textAlign: 'center',
-    color: '#1A1A1A'
+  ratingText: {
+    marginLeft: 5, color: '#888', fontWeight: '600', fontSize: 13,
   },
-  button: {
-    backgroundColor: '#FF6600',
-    padding: 16,
-    borderRadius: 12,
-    marginTop: 25,
-    alignItems: 'center',
-    shadowColor: '#FF6600',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
-    shadowRadius: 5,
-    elevation: 6
+  sectionTitle: {
+    fontSize: 16, fontWeight: '700', color: '#333', marginBottom: 8,
   },
-  buttonText: { 
-    color: '#FFFFFF', 
-    fontSize: 18, 
-    fontWeight: 'bold',
-    letterSpacing: 0.5
-  }
+  description: {
+    fontSize: 15, color: '#666', lineHeight: 24,
+  },
+  
+  // Barra Inferior
+  bottomBar: {
+    position: 'absolute', bottom: 0, width: '100%',
+    backgroundColor: '#FFF',
+    paddingHorizontal: 20, paddingVertical: 20,
+    paddingBottom: 30, // Para iPhone X+
+    flexDirection: 'row', alignItems: 'center',
+    borderTopWidth: 1, borderTopColor: '#F5F5F5',
+    elevation: 10, shadowColor: "#000", shadowOffset: {width:0, height:-2}, shadowOpacity: 0.05,
+  },
+  counter: {
+    flexDirection: 'row', alignItems: 'center',
+    backgroundColor: '#F5F6FA', borderRadius: 15,
+    padding: 5, marginRight: 15,
+  },
+  counterBtn: {
+    width: 36, height: 36,
+    backgroundColor: '#FFF', borderRadius: 12,
+    justifyContent: 'center', alignItems: 'center',
+    elevation: 1, shadowColor: '#000', shadowOpacity: 0.05,
+  },
+  counterVal: {
+    fontSize: 16, fontWeight: 'bold', marginHorizontal: 15, color: '#333',
+  },
+  addBtn: {
+    flex: 1,
+    backgroundColor: '#1a1d2e', // Color oscuro elegante para el botón de acción
+    paddingVertical: 16,
+    borderRadius: 16,
+    justifyContent: 'center', alignItems: 'center',
+    elevation: 5, shadowColor: '#1a1d2e', shadowOpacity: 0.3, shadowOffset: {width:0, height:4}
+  },
+  addBtnText: {
+    color: '#FFF', fontWeight: 'bold', fontSize: 16,
+  },
 });

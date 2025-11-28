@@ -109,3 +109,56 @@ export const eliminarCocinero = async (id) => {
     return await response.json();
   } catch (error) { return { error: "Error de conexión" }; }
 };
+
+// --- CATEGORÍAS (CRUD) ---
+
+export const getCategorias = async () => {
+  try {
+    const response = await fetch(`${API_URL}/categorias`); // Público
+    return await response.json();
+  } catch (error) {
+    console.error("Error getCategorias:", error);
+    return [];
+  }
+};
+
+export const crearCategoria = async (nombre) => {
+  try {
+    const headers = await getHeaders();
+    const response = await fetch(`${API_URL}/categorias`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ nombre })
+    });
+    return await response.json();
+  } catch (error) {
+    return { error: error.message };
+  }
+};
+
+export const editarCategoria = async (id, nombre) => {
+  try {
+    const headers = await getHeaders();
+    const response = await fetch(`${API_URL}/categorias/${id}`, {
+      method: 'PUT',
+      headers,
+      body: JSON.stringify({ nombre })
+    });
+    return await response.json();
+  } catch (error) {
+    return { error: error.message };
+  }
+};
+
+export const eliminarCategoria = async (id) => {
+  try {
+    const headers = await getHeaders();
+    const response = await fetch(`${API_URL}/categorias/${id}`, {
+      method: 'DELETE',
+      headers
+    });
+    return await response.json();
+  } catch (error) {
+    return { error: error.message };
+  }
+};

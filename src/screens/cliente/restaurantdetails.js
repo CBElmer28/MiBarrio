@@ -1,250 +1,245 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, FlatList } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, FlatList, StatusBar, Dimensions } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import homestyles from '../../styles/HomeStyles';
-import categorystyles from '../../styles/CategoryStyles';
+import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { API_URL } from "../../config";
 
+const { width, height } = Dimensions.get('window');
 
 export default function RestaurantDetails() {
-  
   const route = useRoute();
   const navigation = useNavigation();
   const { rest } = route.params;
+  
   const categories = rest.categorias?.map(c => c.nombre) || [];
+  const rating = parseFloat(rest.rating) || 0;
+  const deliveryCost = parseFloat(rest.delivery_cost) || 0;
+  const time = parseFloat(rest.tiempo_entrega) || 0;
 
-const rating = parseFloat(rest.rating) || 0;
-const deliveryCost = parseFloat(rest.delivery_cost) || 0;
-const time = parseFloat(rest.tiempo_entrega) || 0;
-
-  // Filtrar comidas por restaurante
   const [restaurantFoods, setRestaurantFoods] = React.useState([]);
 
   React.useEffect(() => {
-  const fetchFoods = async () => {
-    try {
-      const res = await fetch(`${API_URL}/platillos/restaurante/${rest.id}`);
-      const data = await res.json();
-      setRestaurantFoods(data);
-    } catch (err) {
-      console.log("Error cargando platillos:", err);
-    }
-  };
+    const fetchFoods = async () => {
+      try {
+        const res = await fetch(`${API_URL}/platillos/restaurante/${rest.id}`);
+        const data = await res.json();
+        setRestaurantFoods(data);
+      } catch (err) {
+        console.log("Error cargando platillos:", err);
+      }
+    };
     fetchFoods();
-}, []);
+  }, []);
 
-    const renderFoodItem = ({ item }) => (
+  // --- ITEM DE COMIDA (Horizontal Clean) ---
+  const renderFoodItem = ({ item }) => (
     <TouchableOpacity
       style={styles.foodCard}
+      activeOpacity={0.7}
       onPress={() => navigation.navigate("FoodDetails", { food: item })}
     >
+      {/* Imagen cuadrada a la izquierda */}
       <Image source={{ uri: item.imagen }} style={styles.foodImage} />
 
+      {/* Info derecha */}
       <View style={styles.foodInfo}>
-        <Text style={styles.foodName}>{item.nombre}</Text>
-
-        <View style={styles.foodDetails}>
-          <View style={styles.ratingContainer}>
-            <Image
-              source={require("../../../assets/icons/Star.png")}
-              style={[styles.smallIcon, { tintColor: "#FFD700" }]}
-            />
-            <Text style={styles.ratingText}>
-              {Number(item.rating || 0).toFixed(1)}
+        <View>
+            <Text style={styles.foodName} numberOfLines={2}>{item.nombre}</Text>
+            <Text style={styles.foodDesc} numberOfLines={1}>
+                {item.descripcion || "Sin descripción disponible"}
             </Text>
-          </View>
-
-          <Text style={styles.priceText}>
-            S/ {Number(item.precio).toFixed(2)}
-          </Text>
         </View>
 
-        <Text style={styles.categoryText}>
-          {item.categorias?.map(c => c.nombre).join(", ")}
-        </Text>
+        <View style={styles.foodFooter}>
+          <Text style={styles.priceText}>S/ {Number(item.precio).toFixed(2)}</Text>
+          {/* Botón Agregar Pequeño */}
+          <View style={styles.addBtn}>
+             <Ionicons name="add" size={18} color="#FFF" />
+          </View>
+        </View>
       </View>
     </TouchableOpacity>
   );
 
-
-
   return (
-  <FlatList
-    data={restaurantFoods}
-    renderItem={renderFoodItem}
-    keyExtractor={(item) => item.id.toString()}
-    ListEmptyComponent={
-      <View style={styles.emptyContainer}>
-        <Text style={styles.emptyText}>😔 No hay platillos disponibles</Text>
-      </View>
-    }
-    ListHeaderComponent={
-      <>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={categorystyles.iconButton}>
-          <Image source={require('../../../assets/icons/Back.png')} style={categorystyles.headerIcon} />
-        </TouchableOpacity>
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
 
-        <Image source={{uri: rest.imagen}} style={styles.image} />
-        <Text style={styles.name}>{rest.nombre}</Text>
-        <Text style={styles.categories}>{categories.join(' - ')}</Text>
+      {/* IMAGEN HEADER FIJA (Z-Index bajo para que quede al fondo) */}
+      <Image source={{uri: rest.imagen}} style={styles.heroImage} />
 
-        <View style={styles.infoRow}>
-          <View style={styles.infoItem}>
-            <Image source={require('../../../assets/icons/Star.png')} style={[homestyles.icon, { tintColor: '#FF6600' }]} />
-            <Text style={homestyles.infoText}>{rating.toFixed(1)}</Text>
+      {/* GRADIENTE O SOMBRA (Opcional para que se lea bien el botón atrás) */}
+      <View style={styles.overlayHeader} />
+
+      {/* BOTÓN ATRÁS */}
+      <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+        <Ionicons name="arrow-back" size={24} color="#000" />
+      </TouchableOpacity>
+
+      {/* CONTENIDO DESLIZABLE (SHEET) */}
+      <FlatList
+        data={restaurantFoods}
+        renderItem={renderFoodItem}
+        keyExtractor={(item) => item.id.toString()}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+        ListEmptyComponent={
+          <View style={styles.emptyContainer}>
+            <Ionicons name="fast-food-outline" size={40} color="#ccc" />
+            <Text style={styles.emptyText}>No hay platillos disponibles</Text>
           </View>
-          <View style={styles.infoItem}>
-            <Image source={require('../../../assets/icons/Car.png')} style={[homestyles.icon, { tintColor: '#FF6600' }]} />
-            <Text style={homestyles.infoText}>S/ {deliveryCost.toFixed(2)}</Text>
+        }
+        ListHeaderComponent={
+          <View style={styles.headerContent}>
+            {/* Título y Categorías */}
+            <Text style={styles.name}>{rest.nombre}</Text>
+            <Text style={styles.categories}>{categories.join(' • ')}</Text>
+
+            {/* Info Row (Rating, Delivery, Tiempo) */}
+            <View style={styles.statsRow}>
+              <View style={styles.statItem}>
+                <Ionicons name="star" size={16} color="#FFD700" />
+                <Text style={styles.statText}>{rating.toFixed(1)}</Text>
+              </View>
+              <View style={styles.statDivider} />
+              <View style={styles.statItem}>
+                <Ionicons name="time-outline" size={16} color="#666" />
+                <Text style={styles.statText}>{time} min</Text>
+              </View>
+              <View style={styles.statDivider} />
+              <View style={styles.statItem}>
+                <MaterialIcons name="delivery-dining" size={18} color="#FF6600" />
+                <Text style={styles.statText}>
+                   {deliveryCost === 0 ? 'Gratis' : `S/ ${deliveryCost}`}
+                </Text>
+              </View>
+            </View>
+
+            <View style={styles.divider} />
+            <Text style={styles.menuTitle}>Menú</Text>
           </View>
-          <View style={styles.infoItem}>
-            <Image source={require('../../../assets/icons/Watch.png')} style={[homestyles.icon, { tintColor: '#FF6600' }]} />
-            <Text style={homestyles.infoText}>{time} min</Text>
-          </View>
-        </View>
-
-        <View style={styles.divider} />
-
-        <Text style={styles.menuTitle}>🍽️ Menú del Restaurante</Text>
-      </>
-    }
-    contentContainerStyle={styles.scrollContent}
-  />
-);
-
+        }
+      />
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
   container: { 
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#F8F9FD', // Fondo negro para que la imagen resalte antes de cargar
   },
-  scrollContent: {
-    padding: 16,
-    paddingBottom: 30,
-  },
-  image: { 
+  heroImage: { 
+    position: 'absolute',
+    top: 0,
+    left: 0,
     width: '100%', 
-    height: 250,
-    borderRadius: 16,
-    marginBottom: 24,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    height: 300, // Un poco más alta para el efecto rebote
+    resizeMode: 'cover',
+  },
+  overlayHeader: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: 100,
+    backgroundColor: 'rgba(0,0,0,0.1)', // Sutil oscurecimiento arriba
+  },
+  backBtn: {
+    position: 'absolute',
+    top: 50,
+    left: 20,
+    backgroundColor: '#FFF',
+    padding: 8,
+    borderRadius: 12,
+    zIndex: 10,
     elevation: 5,
   },
+  scrollContent: {
+    paddingTop: 220, // Empuja el contenido hacia abajo para ver la imagen
+    paddingBottom: 40,
+    backgroundColor: 'transparent',
+  },
+  headerContent: {
+    backgroundColor: '#FFF',
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    paddingHorizontal: 25,
+    paddingTop: 30,
+    paddingBottom: 10,
+    minHeight: 100, // Asegura que cubra bien
+  },
   name: { 
-    fontSize: 28,
+    fontSize: 26,
     fontWeight: '800',
-    marginBottom: 8,
-    color: '#222',
+    color: '#1a1d2e',
+    marginBottom: 5,
   },
   categories: { 
-    fontSize: 16,
-    color: '#666',
+    fontSize: 14,
+    color: '#888',
     marginBottom: 20,
-    letterSpacing: 0.5,
   },
-  infoRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingVertical: 12,
-    marginBottom: 24,
-    backgroundColor: '#f8f8f8',
-    borderRadius: 12,
-    padding: 16,
-  },
-  infoItem: {
+  // Stats Row
+  statsRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    justifyContent: 'space-between',
+    backgroundColor: '#F9F9F9',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 15,
   },
-  divider: {
-    height: 1,
-    backgroundColor: '#E0E0E0',
-    marginVertical: 20,
-  },
-  menuTitle: {
-    fontSize: 22,
-    fontWeight: '700',
-    marginBottom: 16,
-    color: '#2C3E50',
-  },
-  foodList: {
-    gap: 16,
-  },
+  statItem: { flexDirection: 'row', alignItems: 'center', gap: 5 },
+  statText: { fontWeight: '700', fontSize: 13, color: '#333' },
+  statDivider: { width: 1, height: 20, backgroundColor: '#DDD' },
+
+  divider: { height: 1, backgroundColor: '#F0F0F0', marginVertical: 25 },
+  menuTitle: { fontSize: 20, fontWeight: '700', color: '#333', marginBottom: 15 },
+
+  // Food Item Styles
   foodCard: {
     flexDirection: 'row',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-    marginBottom: 12,
+    backgroundColor: '#FFF',
+    marginBottom: 15,
+    borderRadius: 16,
+    padding: 10,
+    // Esto es necesario para que se vea dentro del FlatList que tiene fondo blanco
+    backgroundColor: '#FFF', 
+    marginHorizontal: 25, // Margen lateral para la lista
+    elevation: 2,
+    shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 5, shadowOffset: {width:0, height:2}
   },
   foodImage: {
-    width: 120,
-    height: 120,
+    width: 90,
+    height: 90,
+    borderRadius: 12,
+    backgroundColor: '#F0F0F0',
   },
   foodInfo: {
     flex: 1,
-    padding: 12,
+    marginLeft: 15,
     justifyContent: 'space-between',
+    paddingVertical: 4,
   },
-  foodName: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#1A1A1A',
-    marginBottom: 6,
-  },
-  foodDetails: {
+  foodName: { fontSize: 16, fontWeight: '700', color: '#333' },
+  foodDesc: { fontSize: 12, color: '#999', marginTop: 2 },
+  foodFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 6,
   },
-  ratingContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
+  priceText: { fontSize: 16, fontWeight: 'bold', color: '#FF6600' },
+  addBtn: {
+    backgroundColor: '#1a1d2e',
+    width: 28, height: 28, borderRadius: 14,
+    justifyContent: 'center', alignItems: 'center'
   },
-  smallIcon: {
-    width: 16,
-    height: 16,
+
+  emptyContainer: { 
+    padding: 40, alignItems: 'center', backgroundColor: '#FFF', 
+    borderTopLeftRadius: 30, borderTopRightRadius: 30, // Para mantener la forma si está vacío
+    minHeight: 500 
   },
-  ratingText: {
-    fontSize: 14,
-    color: '#666',
-    fontWeight: '600',
-  },
-  priceText: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#FF6600',
-  },
-  categoryText: {
-    fontSize: 13,
-    color: '#999',
-    fontStyle: 'italic',
-  },
-  emptyContainer: {
-    padding: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  emptyText: {
-    fontSize: 16,
-    color: '#999',
-    textAlign: 'center',
-  },
+  emptyText: { color: '#999', marginTop: 10 },
 });

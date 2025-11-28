@@ -5,6 +5,7 @@ import AdminDashboard from '../../screens/admin/AdminDashboard';
 // 👇 DESCOMENTA Y ASEGURA QUE LA RUTA SEA CORRECTA
 import AdminRestaurantes from '../../screens/admin/AdminRestaurantes'; 
 import AdminCocineros from '../../screens/admin/AdminCocineros';       
+import AdminCategorias from '../../screens/admin/AdminCategorias';
 
 const Stack = createNativeStackNavigator();
 
@@ -15,6 +16,7 @@ export default function AdminStack() {
       {/* 👇 HABILITA ESTAS PANTALLAS */}
       <Stack.Screen name="AdminRestaurantes" component={AdminRestaurantes} />
       <Stack.Screen name="AdminCocineros" component={AdminCocineros} />
+      <Stack.Screen name="AdminCategorias" component={AdminCategorias} />
     </Stack.Navigator>
   );
 }

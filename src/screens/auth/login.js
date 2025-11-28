@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import CheckBox from 'expo-checkbox';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useRoute } from '@react-navigation/native';
+import { View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, StatusBar } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient'; // Asegúrate de tener esta librería
+import { Ionicons } from '@expo/vector-icons';
 import styles from '../../styles/Stylesheet';
-import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { API_URL } from "../../config";
 
 export default function Login({ navigation }) {
@@ -12,87 +13,94 @@ export default function Login({ navigation }) {
   const [contraseña, setContraseña] = useState('');
   const [error, setError] = useState('');
   const [recordarme, setRecordarme] = useState(false);
+  const [secureText, setSecureText] = useState(true);
 
-    const handleLogin = async () => {
-        try {
-            const response = await axios.post(`${API_URL}/auth/login`, {
-                email,
-                contraseña
-            });
-
-            const { token, usuario } = response.data;
-
-            // 1. Guardar datos del usuario
-            await AsyncStorage.setItem('usuario', JSON.stringify(usuario));
-
-            // 2. CORRECCIÓN: Guardar el token SIEMPRE.
-            // Es necesario para que las peticiones (como guardar dirección) funcionen en esta sesión.
-            await AsyncStorage.setItem('token', token);
-
-            // 3. Lógica de "Recordarme" (Opcional)
-            // Puedes guardar una bandera separada si quieres verificarla al iniciar la app en el futuro
-            if (recordarme) {
-                await AsyncStorage.setItem('remember_me', 'true');
-            } else {
-                await AsyncStorage.removeItem('remember_me');
-            }
-
-            navigation.replace('Main'); // Redirige al home
-        } catch (err) {
-            console.error(err);
-            setError(err.response?.data?.error || 'Error al iniciar sesión');
-        }
-    };
+  const handleLogin = async () => {
+      try {
+          const response = await axios.post(`${API_URL}/auth/login`, { email, contraseña });
+          const { token, usuario } = response.data;
+          await AsyncStorage.setItem('usuario', JSON.stringify(usuario));
+          await AsyncStorage.setItem('token', token);
+          if (recordarme) await AsyncStorage.setItem('remember_me', 'true');
+          else await AsyncStorage.removeItem('remember_me');
+          navigation.replace('Main');
+      } catch (err) {
+          setError(err.response?.data?.error || 'Error al iniciar sesión');
+      }
+  };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.formBox}>
-        <Text style={styles.title}>Iniciar sesión</Text>
+    <LinearGradient colors={['#FF6600', '#FF9944']} style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#FF6600" />
+      
+      {/* CORRECCIÓN TECLADO: KeyboardAvoidingView envuelve todo */}
+      <KeyboardAvoidingView 
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'} 
+        style={styles.keyboardView}
+      >
+        <ScrollView 
+          contentContainerStyle={styles.scrollContainer} 
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={styles.formBox}>
+            <Text style={styles.title}>¡Hola de nuevo!</Text>
+            <Text style={styles.subtitle}>Ingresa para pedir tu comida favorita</Text>
 
-        <Text style={styles.label}>CORREO ELECTRÓNICO</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="example@gmail.com"
-          placeholderTextColor="#aaa"
-          keyboardType="email-address"
-          value={email}
-          onChangeText={setEmail}
-        />
+            <Text style={styles.label}>CORREO ELECTRÓNICO</Text>
+            <View style={styles.inputContainer}>
+              <Ionicons name="mail-outline" size={20} color="#999" style={styles.inputIcon} />
+              <TextInput
+                style={styles.input}
+                placeholder="ejemplo@gmail.com"
+                placeholderTextColor="#bbb"
+                keyboardType="email-address"
+                value={email}
+                onChangeText={setEmail}
+                autoCapitalize="none"
+              />
+            </View>
 
-        <Text style={styles.label}>CONTRASEÑA</Text>
-        <View style={styles.passwordContainer}>
-          <TextInput
-            style={[styles.input, { flex: 1 }]}
-            placeholder="••••••••"
-            placeholderTextColor="#aaa"
-            secureTextEntry
-            value={contraseña}
-            onChangeText={setContraseña}
-          />
-        </View>
+            <Text style={styles.label}>CONTRASEÑA</Text>
+            <View style={styles.inputContainer}>
+              <Ionicons name="lock-closed-outline" size={20} color="#999" style={styles.inputIcon} />
+              <TextInput
+                style={styles.input}
+                placeholder="••••••••"
+                placeholderTextColor="#bbb"
+                secureTextEntry={secureText}
+                value={contraseña}
+                onChangeText={setContraseña}
+              />
+              <TouchableOpacity onPress={() => setSecureText(!secureText)}>
+                <Ionicons name={secureText ? "eye-off-outline" : "eye-outline"} size={20} color="#999" />
+              </TouchableOpacity>
+            </View>
 
-        <View style={styles.options}>
-          <View style={styles.checkboxContainer}>
-              <CheckBox value={recordarme} onValueChange={setRecordarme} />
-            <Text style={styles.checkboxLabel}>Recordarme</Text>
+            <View style={styles.options}>
+              <View style={styles.checkboxContainer}>
+                  <CheckBox value={recordarme} onValueChange={setRecordarme} color={recordarme ? '#FF6600' : undefined} />
+                <Text style={styles.checkboxLabel}>Recordarme</Text>
+              </View>
+              <TouchableOpacity>
+                <Text style={styles.link}>¿Olvidaste tu clave?</Text>
+              </TouchableOpacity>
+            </View>
+
+            {error ? <Text style={{ color: '#FF3B30', textAlign: 'center', marginBottom: 10 }}>{error}</Text> : null}
+
+            <TouchableOpacity style={styles.button} onPress={handleLogin}>
+              <Text style={styles.buttonText}>INICIAR SESIÓN</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+              <Text style={styles.registerText}>
+                ¿No tienes cuenta? <Text style={styles.link}>Regístrate</Text>
+              </Text>
+            </TouchableOpacity>
           </View>
-          <TouchableOpacity>
-            <Text style={styles.link}>Olvidé mi contraseña</Text>
-          </TouchableOpacity>
-        </View>
-
-        {error ? <Text style={{ color: 'red', marginBottom: 10 }}>{error}</Text> : null}
-
-        <TouchableOpacity style={styles.button} onPress={handleLogin}>
-          <Text style={styles.buttonText}>INICIAR SESIÓN</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-          <Text style={styles.registerText}>
-            ¿No tienes cuenta? <Text style={styles.link}>REGÍSTRATE</Text>
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </LinearGradient>
   );
 }

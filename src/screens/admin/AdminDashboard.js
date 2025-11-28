@@ -47,6 +47,19 @@ export default function AdminDashboard({ navigation }) {
         </TouchableOpacity>
       </View>
 
+      {/* TARJETA 3: CATEGORIAS */}
+      <View style={styles.grid}>
+      <TouchableOpacity 
+          style={styles.card}
+          onPress={() => navigation.navigate('AdminCategorias')} // Asegúrate de registrar esta ruta en tu Navigator
+        >
+          <View style={[styles.iconContainer, { backgroundColor: '#E8F5E9' }]}>
+            <Ionicons name="list" size={32} color="#4CAF50" />
+          </View>
+          <Text style={styles.cardTitle}>Categorías</Text>
+          <Text style={styles.cardDesc}>Gestionar tipos de comida</Text>
+        </TouchableOpacity>
+      </View>
       <TouchableOpacity style={styles.logoutBtn} onPress={logout}>
         <Text style={styles.logoutText}>Cerrar Sesión</Text>
       </TouchableOpacity>
@@ -60,7 +73,7 @@ const styles = StyleSheet.create({
   title: { fontSize: 28, fontWeight: 'bold', color: '#333' },
   subtitle: { fontSize: 16, color: '#666', marginTop: 5 },
   
-  grid: { flexDirection: 'row', justifyContent: 'space-between' },
+  grid: { flexDirection: 'row', justifyContent: 'space-between', paddingBottom: 30 },
   card: {
     backgroundColor: '#FFF',
     width: '48%',
