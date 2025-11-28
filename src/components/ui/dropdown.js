@@ -2,34 +2,23 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
   Animated,
   StyleSheet,
-  FlatList,
   View,
   Text,
-  TextInput,
   TouchableOpacity,
-  TouchableWithoutFeedback,
+  ScrollView, 
+  Dimensions
 } from 'react-native';
-import {MaterialIcons} from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 
-export default function AnimatedDropdown({ data, selected, onSelect, color = '#2F7EBF' }) {
+export default function AnimatedDropdown({ data, selected, onSelect, color = '#333' }) {
   const animation = useRef(new Animated.Value(0)).current;
-  const scale = useRef(new Animated.Value(0)).current;
   const [toggle, setToggle] = useState(false);
-  const [toggleLong, setToggleLong] = useState(false);
-
-  useEffect(() => {
-    Animated.spring(scale, {
-      toValue: toggleLong ? 1 : 0,
-      friction: 5,
-      useNativeDriver: false,
-    }).start();
-  }, [toggleLong]);
 
   useEffect(() => {
     Animated.timing(animation, {
       toValue: toggle ? 1 : 0,
       duration: 200,
-      useNativeDriver: false,
+      useNativeDriver: false, // Necesario para animar propiedades de layout como maxHeight
     }).start();
   }, [toggle]);
 
@@ -38,135 +27,127 @@ export default function AnimatedDropdown({ data, selected, onSelect, color = '#2
       {
         rotate: animation.interpolate({
           inputRange: [0, 1],
-          outputRange: ['0deg', '90deg'],
+          outputRange: ['0deg', '180deg'],
         }),
       },
     ],
   };
 
-  const listStyle = {
-    opacity: animation,
-    transform: [
-      {
-        translateY: animation.interpolate({
-          inputRange: [0, 1],
-          outputRange: [-10, 0],
-        }),
-      },
-    ],
-  };
-
-  const renderItem = ({ item }) => (
-    <TouchableOpacity
-      style={styles.item}
-      onPress={() => {
-        onSelect(item.value);
-        setToggle(false);
-      }}
-    >
-      <Text style={[styles.itemText, selected === item.value && styles.selectedText]}>
-        {item.label}
-      </Text>
-    </TouchableOpacity>
-  );
+  // Animamos maxHeight en lugar de height fijo
+  // Esto permite que se ajuste al contenido si es poco, y scrollee si es mucho
+  const dropdownMaxHeight = animation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, 300], // Aumentamos el límite visual a 300px
+  });
 
   return (
     <View style={styles.dropdownWrapper}>
+      {/* Botón Principal */}
       <TouchableOpacity
-        style={[styles.button, { borderColor: color }]}
-        onPress={() => {
-          setToggle(!toggle);
-          Animated.timing(animation, {
-            toValue: toggle ? 0 : 1,
-            duration: 200,
-            useNativeDriver: false,
-          }).start();
-        }}
+        style={styles.button}
+        activeOpacity={0.8}
+        onPress={() => setToggle(!toggle)}
       >
-        <Text style={[styles.buttonText, { color }]}>{selected || 'Seleccionar categoría'}</Text>
-        <Animated.View style={[styles.arrow, arrowStyle]}>
-          <MaterialIcons name="chevron-right" size={20} color={color} />
+        <Text style={[styles.buttonText, { color }]} numberOfLines={1}>
+          {selected || 'Categoría'}
+        </Text>
+        <Animated.View style={arrowStyle}>
+          <Ionicons name="chevron-down" size={18} color={color} />
         </Animated.View>
       </TouchableOpacity>
 
-      {toggle && (
-        <Animated.View style={[styles.dropdownList, { borderColor: color }, listStyle]}>
-          <FlatList
-            data={data}
-            keyExtractor={(item) => item.value}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                style={styles.item}
-                onPress={() => {
-                  onSelect(item.value);
-                  setToggle(false);
-                }}
-              >
-                <Text
-                  style={[
-                    styles.itemText,
-                    selected === item.value && { color, fontWeight: 'bold' },
-                  ]}
+      {/* Lista Desplegable */}
+      <Animated.View 
+        style={[
+          styles.dropdownContainer, 
+          { maxHeight: dropdownMaxHeight, opacity: animation }
+        ]}
+      >
+        <ScrollView
+            nestedScrollEnabled={true} // Clave para que funcione dentro de otras vistas
+            showsVerticalScrollIndicator={true}
+            contentContainerStyle={{ paddingVertical: 5 }}
+            style={{ flexGrow: 0 }} // Permite que el ScrollView respete el maxHeight
+        >
+            {data.map((item, index) => (
+                <TouchableOpacity
+                    key={item.value || index}
+                    style={styles.item}
+                    onPress={() => {
+                        onSelect(item.value);
+                        setToggle(false);
+                    }}
                 >
-                  {item.label}
-                </Text>
-              </TouchableOpacity>
-            )}
-          />
-        </Animated.View>
-      )}
+                    <Text style={[
+                        styles.itemText,
+                        selected === item.value && styles.selectedText,
+                    ]}>
+                        {item.label}
+                    </Text>
+                    {selected === item.value && (
+                        <Ionicons name="checkmark" size={16} color="#FF6600" />
+                    )}
+                </TouchableOpacity>
+            ))}
+        </ScrollView>
+      </Animated.View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   dropdownWrapper: {
-    position: 'relative', // referencia para el menú flotante
-    width: 180,
-    zIndex: 100,
+    position: 'relative',
+    width: 160, 
+    zIndex: 2000, 
   },
   button: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
-    borderWidth: 1.5,
-    borderColor: '#2F7EBF',
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
+    justifyContent: 'space-between',
+    backgroundColor: '#F5F6FA',
+    borderRadius: 20,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
   },
   buttonText: {
-    flex: 1,
     fontSize: 14,
-    color: '#2F7EBF',
-    fontWeight: '500',
+    fontWeight: '600',
+    marginRight: 5,
+    flex: 1,
   },
-  arrow: {
-    marginLeft: 8,
-  },
-  dropdownList: {
+  dropdownContainer: {
     position: 'absolute',
-    top: '100%', // justo debajo del botón
+    top: 45, 
     left: 0,
     right: 0,
-    backgroundColor: '#fff',
-    borderWidth: 1.5,
-    borderColor: '#2F7EBF',
-    borderRadius: 8,
-    marginTop: 4,
-    zIndex: 200,
-    elevation: 5, // sombra en Android
+    backgroundColor: '#FFF',
+    borderRadius: 15,
+    overflow: 'hidden', 
+    elevation: 8, 
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    zIndex: 3000,
+    borderColor: '#F0F0F0',
+    borderWidth: 1,
   },
   item: {
-    paddingVertical: 8,
-    paddingHorizontal: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 15,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#F0F0F0',
   },
   itemText: {
     fontSize: 14,
-    color: '#333',
+    color: '#555',
   },
   selectedText: {
-    color: '#2F7EBF',
+    color: '#FF6600',
     fontWeight: 'bold',
   },
 });

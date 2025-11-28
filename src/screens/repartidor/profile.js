@@ -23,21 +23,8 @@ export default function RepartidorProfile({ navigation }) {
         fetchUserName();
     }, []);
 
-    const handleLogout = async () => {
-        try {
-            // 1. Borrar todos los datos de sesión
-            await AsyncStorage.multiRemove(['token', 'usuario', 'token_timestamp']);
-
-            // 2. Resetear la navegación e ir al Login
-            navigation.dispatch(
-                CommonActions.reset({
-                    index: 0,
-                    routes: [{ name: 'Login' }],
-                })
-            );
-        } catch (error) {
-            console.error('Error al cerrar sesión:', error);
-        }
+    const handleLogout = () => {
+        navigation.navigate("AuthLoading");
     };
 
     const menuItems = [
