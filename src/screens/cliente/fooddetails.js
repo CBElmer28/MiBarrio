@@ -6,7 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 // Asegúrate de tener este servicio creado (lo generamos en el paso anterior)
 // Si aún no lo tienes, comenta estas líneas y la lógica de 'isFav'
-import { toggleFavorito, checkEsFavorito } from '../../services/favoritoService';
+import { toggleFavorito, checkEsFavorito } from '../../services/favoriteService';
 
 const { height } = Dimensions.get('window');
 

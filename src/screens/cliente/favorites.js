@@ -4,7 +4,7 @@ import {
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import { getMisFavoritos } from '../../services/favoritoService';
+import { getMisFavoritos } from '../../services/favoriteService';
 import categorystyles from '../../styles/CategoryStyles'; // Reutilizamos estilos de grilla
 
 export default function Favorites({ navigation }) {

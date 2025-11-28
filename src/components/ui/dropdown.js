@@ -2,11 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
   Animated,
   StyleSheet,
-  FlatList,
   View,
   Text,
   TouchableOpacity,
-  ScrollView // Usaremos ScrollView o FlatList
+  ScrollView, 
+  Dimensions
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -18,7 +18,7 @@ export default function AnimatedDropdown({ data, selected, onSelect, color = '#3
     Animated.timing(animation, {
       toValue: toggle ? 1 : 0,
       duration: 200,
-      useNativeDriver: false, 
+      useNativeDriver: false, // Necesario para animar propiedades de layout como maxHeight
     }).start();
   }, [toggle]);
 
@@ -33,10 +33,11 @@ export default function AnimatedDropdown({ data, selected, onSelect, color = '#3
     ],
   };
 
-  // Interpolamos la altura explícita
-  const dropdownHeight = animation.interpolate({
+  // Animamos maxHeight en lugar de height fijo
+  // Esto permite que se ajuste al contenido si es poco, y scrollee si es mucho
+  const dropdownMaxHeight = animation.interpolate({
     inputRange: [0, 1],
-    outputRange: [0, 250], // Aumentamos la altura máxima para ver más items
+    outputRange: [0, 300], // Aumentamos el límite visual a 300px
   });
 
   return (
@@ -56,17 +57,21 @@ export default function AnimatedDropdown({ data, selected, onSelect, color = '#3
       </TouchableOpacity>
 
       {/* Lista Desplegable */}
-      {/* Usamos style para la animación de altura */}
-      <Animated.View style={[styles.dropdownContainer, { height: dropdownHeight, opacity: animation }]}>
-        <View style={styles.innerContainer}>
-            <FlatList
-                data={data}
-                keyExtractor={(item) => item.value.toString()}
-                nestedScrollEnabled={true} // Clave para que funcione dentro de otros scrolls
-                showsVerticalScrollIndicator={true}
-                contentContainerStyle={{ paddingVertical: 5 }}
-                renderItem={({ item }) => (
+      <Animated.View 
+        style={[
+          styles.dropdownContainer, 
+          { maxHeight: dropdownMaxHeight, opacity: animation }
+        ]}
+      >
+        <ScrollView
+            nestedScrollEnabled={true} // Clave para que funcione dentro de otras vistas
+            showsVerticalScrollIndicator={true}
+            contentContainerStyle={{ paddingVertical: 5 }}
+            style={{ flexGrow: 0 }} // Permite que el ScrollView respete el maxHeight
+        >
+            {data.map((item, index) => (
                 <TouchableOpacity
+                    key={item.value || index}
                     style={styles.item}
                     onPress={() => {
                         onSelect(item.value);
@@ -83,9 +88,8 @@ export default function AnimatedDropdown({ data, selected, onSelect, color = '#3
                         <Ionicons name="checkmark" size={16} color="#FF6600" />
                     )}
                 </TouchableOpacity>
-                )}
-            />
-        </View>
+            ))}
+        </ScrollView>
       </Animated.View>
     </View>
   );
@@ -95,7 +99,7 @@ const styles = StyleSheet.create({
   dropdownWrapper: {
     position: 'relative',
     width: 160, 
-    zIndex: 2000, // Z-index muy alto para flotar sobre todo
+    zIndex: 2000, 
   },
   button: {
     flexDirection: 'row',
@@ -114,21 +118,20 @@ const styles = StyleSheet.create({
   },
   dropdownContainer: {
     position: 'absolute',
-    top: 45, // Justo debajo del botón
+    top: 45, 
     left: 0,
     right: 0,
     backgroundColor: '#FFF',
     borderRadius: 15,
-    overflow: 'hidden', // Importante para la animación de altura
-    elevation: 8, // Sombra más fuerte para que se note que flota
+    overflow: 'hidden', 
+    elevation: 8, 
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 5,
     zIndex: 3000,
-  },
-  innerContainer: {
-      flex: 1, // Asegura que la lista ocupe el espacio animado
+    borderColor: '#F0F0F0',
+    borderWidth: 1,
   },
   item: {
     paddingVertical: 12,
