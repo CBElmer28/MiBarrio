@@ -29,4 +29,4 @@ jobs:
           token: ${{ secrets.EXPO_TOKEN }}
 
       - name: 📲 Publish Update
-        run: eas update --branch production --message "Update from GitHub Actions"
+        run: eas update --branch production --message "Update from GitHub Actions" --platform android --platform ios
