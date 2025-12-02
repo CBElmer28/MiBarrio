@@ -29,4 +29,7 @@ jobs:
           token: ${{ secrets.EXPO_TOKEN }}
 
       - name: 📲 Publish Update
+        env:
+          API_URL: ${{ secrets.API_URL }}
+          GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
         run: eas update --branch production --message "Update from GitHub Actions" --platform android --platform ios

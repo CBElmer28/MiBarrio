@@ -95,7 +95,7 @@ export default function Home({ navigation }) {
             )}
           </TouchableOpacity>
         </View>
-        <Text style={styles.greeting}>Hola, Elmer 👋</Text>
+        <Text style={styles.greeting}>Buenos días 👋</Text>
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 100 }}>
