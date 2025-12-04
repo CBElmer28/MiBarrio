@@ -168,9 +168,9 @@ export default function AdminCocineros({ navigation }) {
             <View style={styles.modalContent}>
                 <Text style={styles.modalHeader}>{esEdicion ? "Editar Cocinero" : "Contratar Cocinero"}</Text>
                 
-                <TextInput style={styles.input} value={nombre} onChangeText={setNombre} placeholder="Nombre" />
-                <TextInput style={styles.input} value={email} onChangeText={setEmail} placeholder="Email" autoCapitalize="none"/>
-                <TextInput style={styles.input} value={pass} onChangeText={setPass} placeholder="Contraseña" />
+                <TextInput style={styles.input} value={nombre} onChangeText={setNombre} placeholder="Nombre" placeholderTextColor="#888" />
+                <TextInput style={styles.input} value={email} onChangeText={setEmail} placeholder="Email" autoCapitalize="none" placeholderTextColor="#888"/>
+                <TextInput style={styles.input} value={pass} onChangeText={setPass} placeholder="Contraseña" placeholderTextColor="#888" />
 
                 <Text style={styles.label}>Asignar a Restaurante:</Text>
                 <View style={styles.restListContainer}>
@@ -218,8 +218,8 @@ const styles = StyleSheet.create({
   fab: { position: 'absolute', bottom: 30, right: 20, width: 60, height: 60, borderRadius: 30, backgroundColor: '#FF9800', justifyContent: 'center', alignItems: 'center', elevation: 5 },
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', padding: 20 },
   modalContent: { backgroundColor: '#FFF', padding: 20, borderRadius: 15, elevation: 5 },
-  modalHeader: { fontSize: 20, fontWeight: 'bold', marginBottom: 20, textAlign: 'center', color:'#333' },
-  input: { borderWidth: 1, borderColor: '#EEE', padding: 12, borderRadius: 8, marginBottom: 10, backgroundColor: '#F9F9F9' },
+  modalHeader: { fontSize: 20, fontWeight: 'bold', marginBottom: 20, textAlign: 'center', color:'#282727ff' },
+  input: { borderWidth: 1, borderColor: '#EEE', padding: 12, borderRadius: 8, marginBottom: 10, backgroundColor: '#F9F9F9', color: '#000' },
   label: { fontWeight: 'bold', marginVertical: 8, color: '#555' },
   restListContainer: { marginBottom: 20, height: 50, marginTop: 5 },
   restItem: { paddingHorizontal: 15, paddingVertical: 10, backgroundColor: '#EEE', borderRadius: 20, marginRight: 10, justifyContent:'center', height: 40 },

@@ -124,10 +124,10 @@ export default function AdminRestaurantes({ navigation }) {
         <View style={styles.modalOverlay}>
             <View style={styles.modalContent}>
                 <Text style={styles.modalHeader}>{esEdicion ? "Editar Restaurante" : "Nuevo Restaurante"}</Text>
-                <TextInput style={styles.input} placeholder="Nombre" value={nombre} onChangeText={setNombre} />
-                <TextInput style={styles.input} placeholder="Dirección" value={direccion} onChangeText={setDireccion} />
-                <TextInput style={styles.input} placeholder="Tipo" value={tipo} onChangeText={setTipo} />
-                <TextInput style={styles.input} placeholder="URL Imagen" value={imagen} onChangeText={setImagen} />
+                <TextInput style={styles.input} placeholder="Nombre" value={nombre} onChangeText={setNombre} placeholderTextColor="#888"/>
+                <TextInput style={styles.input} placeholder="Dirección" value={direccion} onChangeText={setDireccion} placeholderTextColor="#888"/>
+                <TextInput style={styles.input} placeholder="Tipo" value={tipo} onChangeText={setTipo} placeholderTextColor="#888"/>
+                <TextInput style={styles.input} placeholder="URL Imagen" value={imagen} onChangeText={setImagen} placeholderTextColor="#888"/>
                 
                 <View style={styles.rowBtn}>
                     <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.btnCancel}><Text>Cancelar</Text></TouchableOpacity>
@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', padding: 20 },
   modalContent: { backgroundColor: '#FFF', padding: 20, borderRadius: 10 },
   modalHeader: { fontSize: 18, fontWeight: 'bold', marginBottom: 15, textAlign: 'center' },
-  input: { borderWidth: 1, borderColor: '#DDD', padding: 10, borderRadius: 8, marginBottom: 10, backgroundColor: '#F9F9F9' },
+  input: { borderWidth: 1, borderColor: '#DDD', padding: 10, borderRadius: 8, marginBottom: 10, backgroundColor: '#F9F9F9', color: '#000' },
   rowBtn: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 },
   btnCancel: { padding: 10 },
   btnSave: { backgroundColor: '#2196F3', padding: 10, borderRadius: 5, paddingHorizontal: 20 }
