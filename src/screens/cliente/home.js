@@ -6,6 +6,7 @@ import FoodCard from '../../components/elements/foodcard';
 import RestaurantCard from '../../components/elements/restaurantcard';
 import { API_URL } from "../../config";
 import styles from '../../styles/HomeStyles';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Home({ navigation }) {
   const { items } = useContext(CartContext);
@@ -19,10 +20,18 @@ export default function Home({ navigation }) {
   // 1. CAMBIO: Estado para categorías dinámicas
   const [categories, setCategories] = useState(['Todas']); 
   const [loading, setLoading] = useState(true);
+  const [nombreUsuario, setNombreUsuario] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+         const usuarioStorage = await AsyncStorage.getItem('usuario');
+         if (usuarioStorage) {
+             const usuario = JSON.parse(usuarioStorage);
+             if (usuario.nombre) {
+                 setNombreUsuario(usuario.nombre);
+             }
+         }
         // 2. CAMBIO: Fetch simultáneo de todo
         const [resRest, resFood, resCat] = await Promise.all([
             fetch(`${API_URL}/restaurantes`),
@@ -69,7 +78,7 @@ export default function Home({ navigation }) {
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#FFF" />
-      
+
       <View style={styles.headerContainer}>
         <View style={styles.headerRow}>
           <TouchableOpacity onPress={() => navigation.navigate('Menu')} style={styles.menuButton}>
@@ -95,7 +104,7 @@ export default function Home({ navigation }) {
             )}
           </TouchableOpacity>
         </View>
-        <Text style={styles.greeting}>Buenos días 👋</Text>
+        <Text style={styles.greeting}>Buenos días{nombreUsuario ? `, ${nombreUsuario}` : ''} 👋</Text>
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 100 }}>
