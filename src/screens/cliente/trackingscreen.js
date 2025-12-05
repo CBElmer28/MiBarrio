@@ -36,19 +36,28 @@ export default function TrackingScreen() {
 
     //  Geocodificar Dirección (Texto -> Coordenadas) ---
     const geocodeAddress = async (address) => {
-        if (!GOOGLE_MAPS_API_KEY || !address) return null;
+        if (!GOOGLE_MAPS_API_KEY || !address) {
+            console.log("[DEBUG_APP] Geocode skipped: Missing Key or Address");
+            return null;
+        }
         try {
             let searchAddress = address;
             if (!searchAddress.toLowerCase().includes("peru")) {
                 searchAddress += ", Lima, Peru";
             }
 
-            console.log(`📍 Cliente buscando coordenadas para: ${searchAddress}`);
+            console.log(`[DEBUG_APP] Geocoding address: ${searchAddress}`);
             const response = await fetch(
                 `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(searchAddress)}&key=${GOOGLE_MAPS_API_KEY}`
             );
             const json = await response.json();
 
+            // 👇 Log Geocoding Result
+            if (json.status !== 'OK') {
+                console.log("[DEBUG_APP] Geocoding Failed:", json.status, json.error_message);
+            } else {
+                console.log("[DEBUG_APP] Geocoding Success:", json.results[0].geometry.location);
+            }
             if (json.status === 'OK' && json.results.length > 0) {
                 const location = json.results[0].geometry.location;
                 return {
@@ -57,7 +66,7 @@ export default function TrackingScreen() {
                 };
             }
         } catch (error) {
-            console.error("Error geocodificando en cliente:", error);
+            console.error("[DEBUG_APP] Error geocodificando:", error);
         }
         return null;
     };
@@ -118,28 +127,21 @@ export default function TrackingScreen() {
                     });
 
                     socketRef.current.on('connect', () => {
-                        console.log("🟢 Cliente conectado a Socket");
+                        console.log("[DEBUG_APP] 🟢 Socket Connected! ID:", socketRef.current.id);
                         socketRef.current.emit('join_order_room', { orderId: order.id });
                     });
 
-                    // Si el tracking ya empezó, el server nos puede mandar el destino calculado también
-                    socketRef.current.on('orden:tracking_started', (data) => {
-                        if (data.destination && isMounted) {
-                            console.log("📍 Destino actualizado por servidor");
-                            setClientPos(data.destination);
-                        }
+                    socketRef.current.on('connect_error', (err) => {
+                        console.log("[DEBUG_APP] 🔴 Socket Connection Error:", err.message);
                     });
 
                     socketRef.current.on('driver_position_update', (data) => {
+                        console.log("[DEBUG_APP] Driver moved:", data.coords);
                         const { coords } = data;
                         if (coords && isMounted) {
                             setDriverPos(coords);
-
-                            mapRef.current?.animateCamera({
-                                center: coords,
-                                zoom: 16,
-                            }, { duration: 1000 });
-
+                            mapRef.current?.animateCamera({ center: coords, zoom: 16 }, { duration: 1000 });
+                            
                             const now = Date.now();
                             if (now - lastRouteFetchTime.current > ROUTE_REFETCH_INTERVAL) {
                                 lastRouteFetchTime.current = now;
@@ -149,7 +151,7 @@ export default function TrackingScreen() {
                 }
 
             } catch (err) {
-                console.error("Error general init:", err);
+                console.error("[DEBUG_APP] Critical Init Error:", err);
             } finally {
                 if (isMounted) setLoading(false);
             }
@@ -159,7 +161,10 @@ export default function TrackingScreen() {
 
         return () => {
             isMounted = false;
-            socketRef.current?.disconnect();
+            if(socketRef.current) {
+                console.log("[DEBUG_APP] Disconnecting Socket");
+                socketRef.current.disconnect();
+            }
         };
     }, []);
 

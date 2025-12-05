@@ -6,7 +6,7 @@ import { View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform
 import { LinearGradient } from 'expo-linear-gradient'; // Asegúrate de tener esta librería
 import { Ionicons } from '@expo/vector-icons';
 import styles from '../../styles/Stylesheet';
-import { API_URL } from "../../config";
+import { API_URL, GOOGLE_MAPS_API_KEY } from "../../config";
 
 export default function Login({ navigation }) {
   const [email, setEmail] = useState('');
@@ -15,16 +15,42 @@ export default function Login({ navigation }) {
   const [recordarme, setRecordarme] = useState(false);
   const [secureText, setSecureText] = useState(true);
 
+  useEffect(() => {
+    console.log("========================================");
+    console.log("[DEBUG_APP] Login Screen Mounted");
+    console.log("[DEBUG_APP] API_URL:", API_URL);
+    console.log("[DEBUG_APP] MAPS_KEY Loaded:", !!GOOGLE_MAPS_API_KEY); // Returns true/false
+    console.log("========================================");
+  }, []);
+
   const handleLogin = async () => {
+      console.log(`[DEBUG_APP] Attempting login to: ${API_URL}/auth/login`);
+      console.log(`[DEBUG_APP] Payload:`, { email }); // Don't log password
+
       try {
           const response = await axios.post(`${API_URL}/auth/login`, { email, contraseña });
+          
+          console.log("[DEBUG_APP] Login Success Status:", response.status);
           const { token, usuario } = response.data;
+          
+          console.log("[DEBUG_APP] Token received:", token ? "YES" : "NO");
+          console.log("[DEBUG_APP] User Role:", usuario?.tipo);
+
           await AsyncStorage.setItem('usuario', JSON.stringify(usuario));
           await AsyncStorage.setItem('token', token);
+          
           if (recordarme) await AsyncStorage.setItem('remember_me', 'true');
           else await AsyncStorage.removeItem('remember_me');
+          
           navigation.replace('Main');
       } catch (err) {
+          console.error("[DEBUG_APP] Login Error:", err.message);
+          if (err.response) {
+              console.log("[DEBUG_APP] Server Response:", err.response.data);
+              console.log("[DEBUG_APP] Status Code:", err.response.status);
+          } else if (err.request) {
+              console.log("[DEBUG_APP] No response received. Possible Network Error or Wrong IP.");
+          }
           setError(err.response?.data?.error || 'Error al iniciar sesión');
       }
   };

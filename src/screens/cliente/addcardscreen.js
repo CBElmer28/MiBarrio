@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ScrollView, Image, ActivityIndicator } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import categorystyles from '../../styles/CategoryStyles';
-import { guardarTarjeta } from '../../services/paymentService'; // <--- Importamos servicio
+import { guardarTarjeta } from '../../services/paymentService'; 
 
 export default function AddCardScreen() {
   const route = useRoute();
