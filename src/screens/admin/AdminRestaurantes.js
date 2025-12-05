@@ -84,6 +84,7 @@ export default function AdminRestaurantes({ navigation }) {
     <View style={styles.card}>
         <View style={styles.info}>
             <Text style={styles.title}>{item.nombre}</Text>
+            {/* CAMBIO: Texto negro (#000) en lugar de gris */}
             <Text style={styles.sub}>{item.tipo} • {item.direccion}</Text>
         </View>
         <View style={{flexDirection:'row', gap:10}}>
@@ -102,7 +103,8 @@ export default function AdminRestaurantes({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}><Ionicons name="arrow-back" size={24}/></TouchableOpacity>
+        {/* CAMBIO: Color negro explícito para la flecha */}
+        <TouchableOpacity onPress={() => navigation.goBack()}><Ionicons name="arrow-back" size={24} color="#000"/></TouchableOpacity>
         <Text style={styles.headerTitle}>Restaurantes</Text>
         <View style={{width:24}}/>
       </View>
@@ -124,14 +126,21 @@ export default function AdminRestaurantes({ navigation }) {
         <View style={styles.modalOverlay}>
             <View style={styles.modalContent}>
                 <Text style={styles.modalHeader}>{esEdicion ? "Editar Restaurante" : "Nuevo Restaurante"}</Text>
-                <TextInput style={styles.input} placeholder="Nombre" value={nombre} onChangeText={setNombre} placeholderTextColor="#888"/>
-                <TextInput style={styles.input} placeholder="Dirección" value={direccion} onChangeText={setDireccion} placeholderTextColor="#888"/>
-                <TextInput style={styles.input} placeholder="Tipo" value={tipo} onChangeText={setTipo} placeholderTextColor="#888"/>
-                <TextInput style={styles.input} placeholder="URL Imagen" value={imagen} onChangeText={setImagen} placeholderTextColor="#888"/>
+                
+                {/* CAMBIO: placeholderTextColor más oscuro (#555) para que se vea */}
+                <TextInput style={styles.input} placeholder="Nombre" value={nombre} onChangeText={setNombre} placeholderTextColor="#555"/>
+                <TextInput style={styles.input} placeholder="Dirección" value={direccion} onChangeText={setDireccion} placeholderTextColor="#555"/>
+                <TextInput style={styles.input} placeholder="Tipo" value={tipo} onChangeText={setTipo} placeholderTextColor="#555"/>
+                <TextInput style={styles.input} placeholder="URL Imagen" value={imagen} onChangeText={setImagen} placeholderTextColor="#555"/>
                 
                 <View style={styles.rowBtn}>
-                    <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.btnCancel}><Text>Cancelar</Text></TouchableOpacity>
-                    <TouchableOpacity onPress={handleGuardar} style={styles.btnSave}><Text style={{color:'#FFF'}}>Guardar</Text></TouchableOpacity>
+                    <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.btnCancel}>
+                        {/* CAMBIO: Texto negro explícito y negrita */}
+                        <Text style={{color: '#000', fontWeight: 'bold'}}>Cancelar</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={handleGuardar} style={styles.btnSave}>
+                        <Text style={{color:'#FFF', fontWeight: 'bold'}}>Guardar</Text>
+                    </TouchableOpacity>
                 </View>
             </View>
         </View>
@@ -143,17 +152,23 @@ export default function AdminRestaurantes({ navigation }) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#F5F5F5', paddingTop: 40 },
   header: { flexDirection: 'row', justifyContent:'space-between', paddingHorizontal: 20, alignItems: 'center' },
-  headerTitle: { fontSize: 20, fontWeight: 'bold', color:"#1b1919ff" },
+  // CAMBIO: Color #000
+  headerTitle: { fontSize: 20, fontWeight: 'bold', color: "#000" },
   card: { backgroundColor: '#FFF', padding: 15, borderRadius: 10, marginBottom: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', elevation: 2 },
   info: { flex: 1 },
-  title: { fontSize: 16, fontWeight: 'bold', color:"#000" },
-  sub: { color: '#666', fontSize: 12 },
+  // CAMBIO: Color #000
+  title: { fontSize: 16, fontWeight: 'bold', color: "#000" },
+  // CAMBIO: Color #000 (antes #666)
+  sub: { color: '#000', fontSize: 12 },
   fab: { position: 'absolute', bottom: 30, right: 20, width: 60, height: 60, borderRadius: 30, backgroundColor: '#2196F3', justifyContent: 'center', alignItems: 'center', elevation: 5 },
-  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', padding: 20, color:"#000" },
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', padding: 20 },
   modalContent: { backgroundColor: '#FFF', padding: 20, borderRadius: 10 },
-  modalHeader: { fontSize: 18, fontWeight: 'bold', marginBottom: 15, textAlign: 'center', color:'#282727ff' },
-  input: { borderWidth: 1, borderColor: '#DDD', padding: 10, borderRadius: 8, marginBottom: 10, backgroundColor: '#F9F9F9', color: '#000' },
-  rowBtn: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 10, color:"#000" },
-  btnCancel: { padding: 10, color: "#000" },
-  btnSave: { backgroundColor: '#2196F3', padding: 10, borderRadius: 5, paddingHorizontal: 20 }
+  // CAMBIO: Color #000
+  modalHeader: { fontSize: 18, fontWeight: 'bold', marginBottom: 15, textAlign: 'center', color: '#000' },
+  // CAMBIO: Color input #000
+  input: { borderWidth: 1, borderColor: '#CCC', padding: 10, borderRadius: 8, marginBottom: 10, backgroundColor: '#FFF', color: '#000' },
+  rowBtn: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 },
+  // CAMBIO: Fondo gris un poco más oscuro para que contraste con el modal blanco
+  btnCancel: { padding: 10, backgroundColor: '#DDD', borderRadius: 5, flex: 1, alignItems: 'center', marginRight: 10 },
+  btnSave: { backgroundColor: '#2196F3', padding: 10, borderRadius: 5, flex: 1, alignItems: 'center' }
 });

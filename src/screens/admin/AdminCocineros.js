@@ -85,10 +85,10 @@ export default function AdminCocineros({ navigation }) {
         if (esEdicion) {
             res = await editarCocinero(idSeleccionado, datos);
         } else {
-            res = await crearCocinero(datos); // <--- AQUÍ PUEDE ESTAR EL FALLO
+            res = await crearCocinero(datos); 
         }
         
-        console.log("📬 Respuesta del servicio:", res); // <--- MIRA ESTO EN LA CONSOLA
+        console.log("📬 Respuesta del servicio:", res); 
 
         if (res && !res.error) {
             console.log("✅ Guardado exitoso");
@@ -148,7 +148,7 @@ export default function AdminCocineros({ navigation }) {
     <View style={styles.container}>
       {/* ... HEADER ... */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}><Ionicons name="arrow-back" size={24}/></TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.goBack()}><Ionicons name="arrow-back" size={24} color="#000"/></TouchableOpacity>
         <Text style={styles.headerTitle}>Gestionar Cocineros</Text>
         <View style={{width:24}}/>
       </View>
@@ -168,9 +168,10 @@ export default function AdminCocineros({ navigation }) {
             <View style={styles.modalContent}>
                 <Text style={styles.modalHeader}>{esEdicion ? "Editar Cocinero" : "Contratar Cocinero"}</Text>
                 
-                <TextInput style={styles.input} value={nombre} onChangeText={setNombre} placeholder="Nombre" placeholderTextColor="#888" />
-                <TextInput style={styles.input} value={email} onChangeText={setEmail} placeholder="Email" autoCapitalize="none" placeholderTextColor="#888"/>
-                <TextInput style={styles.input} value={pass} onChangeText={setPass} placeholder="Contraseña" placeholderTextColor="#888" />
+                {/* CAMBIO: placeholderTextColor a negro/oscuro */}
+                <TextInput style={styles.input} value={nombre} onChangeText={setNombre} placeholder="Nombre" placeholderTextColor="#555" />
+                <TextInput style={styles.input} value={email} onChangeText={setEmail} placeholder="Email" autoCapitalize="none" placeholderTextColor="#555"/>
+                <TextInput style={styles.input} value={pass} onChangeText={setPass} placeholder="Contraseña" placeholderTextColor="#555" />
 
                 <Text style={styles.label}>Asignar a Restaurante:</Text>
                 <View style={styles.restListContainer}>
@@ -180,11 +181,12 @@ export default function AdminCocineros({ navigation }) {
                                 key={r.id} 
                                 style={[styles.restItem, selectedRest === r.id && styles.restActive]}
                                 onPress={() => {
-                                    console.log("Seleccionado restaurante:", r.id, r.nombre); // <--- CHIVATO
+                                    console.log("Seleccionado restaurante:", r.id, r.nombre);
                                     setSelectedRest(r.id);
                                 }}
                             >
-                                <Text style={selectedRest === r.id ? {color:'#FFF'} : {color:'#333'}}>
+                                {/* CAMBIO: Texto negro si no está seleccionado */}
+                                <Text style={selectedRest === r.id ? {color:'#FFF', fontWeight: 'bold'} : {color:'#000', fontWeight: 'bold'}}>
                                     {r.nombre}
                                 </Text>
                             </TouchableOpacity>
@@ -193,7 +195,9 @@ export default function AdminCocineros({ navigation }) {
                 </View>
                 
                 <View style={styles.rowBtn}>
-                    <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.btnCancel}><Text>Cancelar</Text></TouchableOpacity>
+                    <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.btnCancel}>
+                        <Text style={{color: '#000', fontWeight: 'bold'}}>Cancelar</Text>
+                    </TouchableOpacity>
                     {/* BOTÓN GUARDAR CONECTADO */}
                     <TouchableOpacity onPress={handleGuardar} style={styles.btnSave}>
                         <Text style={{color:'#FFF', fontWeight:'bold'}}>Guardar</Text>
@@ -209,22 +213,29 @@ export default function AdminCocineros({ navigation }) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#F5F5F5', paddingTop: 40 },
   header: { flexDirection: 'row', justifyContent:'space-between', paddingHorizontal: 20, alignItems: 'center' },
-  headerTitle: { fontSize: 20, fontWeight: 'bold', color:'#333' },
+  // CAMBIO: color a #000
+  headerTitle: { fontSize: 20, fontWeight: 'bold', color:'#000' },
   card: { backgroundColor: '#FFF', padding: 15, borderRadius: 12, marginBottom: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', elevation: 2 },
   avatar: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#FF9800', justifyContent:'center', alignItems:'center' },
-  title: { fontSize: 16, fontWeight: 'bold', color:'#333' },
-  sub: { color: '#666', fontSize: 12 },
-  restLabel: { color: '#2196F3', fontSize: 12, fontWeight: 'bold', marginTop: 2 },
+  // CAMBIO: color a #000
+  title: { fontSize: 16, fontWeight: 'bold', color:'#000' },
+  // CAMBIO: color a #000 (antes gris claro)
+  sub: { color: '#000', fontSize: 12 },
+  // CAMBIO: color azul oscuro o negro para visibilidad
+  restLabel: { color: '#000', fontSize: 12, fontWeight: 'bold', marginTop: 2 },
   fab: { position: 'absolute', bottom: 30, right: 20, width: 60, height: 60, borderRadius: 30, backgroundColor: '#FF9800', justifyContent: 'center', alignItems: 'center', elevation: 5 },
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', padding: 20 },
   modalContent: { backgroundColor: '#FFF', padding: 20, borderRadius: 15, elevation: 5 },
-  modalHeader: { fontSize: 20, fontWeight: 'bold', marginBottom: 20, textAlign: 'center', color:'#282727ff' },
-  input: { borderWidth: 1, borderColor: '#EEE', padding: 12, borderRadius: 8, marginBottom: 10, backgroundColor: '#F9F9F9', color: '#000' },
-  label: { fontWeight: 'bold', marginVertical: 8, color: '#555' },
+  // CAMBIO: color a #000
+  modalHeader: { fontSize: 20, fontWeight: 'bold', marginBottom: 20, textAlign: 'center', color:'#000' },
+  // CAMBIO: color input #000
+  input: { borderWidth: 1, borderColor: '#CCC', padding: 12, borderRadius: 8, marginBottom: 10, backgroundColor: '#FFF', color: '#000' },
+  // CAMBIO: color label #000
+  label: { fontWeight: 'bold', marginVertical: 8, color: '#000' },
   restListContainer: { marginBottom: 20, height: 50, marginTop: 5 },
-  restItem: { paddingHorizontal: 15, paddingVertical: 10, backgroundColor: '#EEE', borderRadius: 20, marginRight: 10, justifyContent:'center', height: 40 },
+  restItem: { paddingHorizontal: 15, paddingVertical: 10, backgroundColor: '#DDD', borderRadius: 20, marginRight: 10, justifyContent:'center', height: 40 },
   restActive: { backgroundColor: '#FF9800' },
   rowBtn: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 10, gap: 10 },
-  btnCancel: { flex: 1, padding: 15, alignItems:'center', backgroundColor:'#EEE', borderRadius: 8 },
+  btnCancel: { flex: 1, padding: 15, alignItems:'center', backgroundColor:'#DDD', borderRadius: 8 },
   btnSave: { flex: 1, backgroundColor: '#FF9800', padding: 15, borderRadius: 8, alignItems:'center' }
 });
