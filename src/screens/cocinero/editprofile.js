@@ -51,7 +51,8 @@ export default function EditProfileScreen({ navigation }) {
       {/* HEADER */}
       <View style={styles.headerRow}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="chevron-back" size={26} color="#222" />
+          {/* CAMBIO: Color negro explícito */}
+          <Ionicons name="chevron-back" size={26} color="#000" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Editar Perfil</Text>
         <View style={{ width: 26 }} />
@@ -81,6 +82,8 @@ export default function EditProfileScreen({ navigation }) {
           value={nombre}
           onChangeText={setNombre}
           placeholder="Ingresa tu nombre"
+          // CAMBIO: Placeholder oscuro
+          placeholderTextColor="#555"
         />
 
         {/* Descripción */}
@@ -91,6 +94,8 @@ export default function EditProfileScreen({ navigation }) {
           onChangeText={setDescripcion}
           multiline
           placeholder="Sobre ti..."
+          // CAMBIO: Placeholder oscuro
+          placeholderTextColor="#555"
         />
       </View>
 
@@ -119,10 +124,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
+  // CAMBIO: Color #000
   headerTitle: {
     fontSize: 18,
     fontWeight: "700",
-    color: "#222",
+    color: "#000",
   },
 
   avatarContainer: {
@@ -163,18 +169,21 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
   },
 
+  // CAMBIO: Color #000
   label: {
     fontWeight: "600",
-    color: "#333",
+    color: "#000",
     marginBottom: 6,
   },
 
+  // CAMBIO: Color texto #000 y fondo blanco puro o gris muy claro
   input: {
     backgroundColor: "#F1F1F1",
     padding: 12,
     borderRadius: 10,
     fontSize: 15,
     marginBottom: 16,
+    color: "#000",
   },
 
   saveBtn: {
