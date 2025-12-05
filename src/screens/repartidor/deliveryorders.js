@@ -3,13 +3,13 @@ import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, RefreshCon
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { io } from "socket.io-client"; // Importar Socket
+import { io } from "socket.io-client"; 
 import styles from '../../styles/DeliveryOrdersStyles';
 
 import { getMisPedidosAsignados } from '../../services/orderService';
-import { API_URL } from '../../config'; // Importar API_URL
+import { API_URL } from '../../config';
 
-const SOCKET_URL = API_URL.replace('/api', ''); // URL base para socket
+const SOCKET_URL = API_URL.replace('/api', '');
 
 const OrderCard = ({ order, onToggle }) => {
     const navigation = useNavigation();
@@ -75,11 +75,17 @@ export default function DeliveryOrders() {
     const fetchOrders = async () => {
         try {
             const data = await getMisPedidosAsignados();
-            const formattedOrders = (Array.isArray(data) ? data : []).map(o => ({
+            
+            const activeOrders = (Array.isArray(data) ? data : []).filter(
+                order => order.estado !== 'entregada' && order.estado !== 'cancelada'
+            );
+
+            const formattedOrders = activeOrders.map(o => ({
                 ...o,
                 expanded: false,
                 cliente: o.cliente || o.Usuario || { nombre: "Cliente" }
             }));
+            
             setOrders(formattedOrders);
         } catch (error) {
             console.error("Error cargando pedidos:", error);
@@ -89,14 +95,14 @@ export default function DeliveryOrders() {
         }
     };
 
-    // 1. Carga Inicial y al volver a la pantalla (Focus)
+    // 1. Carga Inicial y al volver a la pantalla 
     useFocusEffect(
         useCallback(() => {
             fetchOrders();
         }, [])
     );
 
-    // 2. Conexión Socket para ACTUALIZACIÓN DINÁMICA
+    // 2. Conexión Socket 
     useEffect(() => {
         const initSocket = async () => {
             const token = await AsyncStorage.getItem('token');
@@ -116,6 +122,10 @@ export default function DeliveryOrders() {
                 console.log("Nueva orden recibida por socket:", data);
                 Alert.alert("¡Nueva Orden!", "Te han asignado un nuevo pedido.");
                 fetchOrders(); // Recargar lista automáticamente
+            });
+            
+             socketRef.current.on('orden:estado_actualizado', () => {
+                fetchOrders();
             });
         };
 
@@ -158,11 +168,10 @@ export default function DeliveryOrders() {
                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={["#FF6600"]} />
             }
         >
-            {/* Este texto cambia dinámicamente según orders.length */}
             <Text style={styles.listTitle}>
                 {orders.length > 0
                     ? `Tienes ${orders.length} órdenes asignadas`
-                    : "No tienes órdenes asignadas"}
+                    : "No tienes órdenes pendientes"}
             </Text>
 
             {orders.map((order) => (
