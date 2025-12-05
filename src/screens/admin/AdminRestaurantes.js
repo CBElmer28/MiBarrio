@@ -143,17 +143,17 @@ export default function AdminRestaurantes({ navigation }) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#F5F5F5', paddingTop: 40 },
   header: { flexDirection: 'row', justifyContent:'space-between', paddingHorizontal: 20, alignItems: 'center' },
-  headerTitle: { fontSize: 20, fontWeight: 'bold' },
+  headerTitle: { fontSize: 20, fontWeight: 'bold', color:"#1b1919ff" },
   card: { backgroundColor: '#FFF', padding: 15, borderRadius: 10, marginBottom: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', elevation: 2 },
   info: { flex: 1 },
-  title: { fontSize: 16, fontWeight: 'bold' },
+  title: { fontSize: 16, fontWeight: 'bold', color:"#000" },
   sub: { color: '#666', fontSize: 12 },
   fab: { position: 'absolute', bottom: 30, right: 20, width: 60, height: 60, borderRadius: 30, backgroundColor: '#2196F3', justifyContent: 'center', alignItems: 'center', elevation: 5 },
-  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', padding: 20 },
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', padding: 20, color:"#000" },
   modalContent: { backgroundColor: '#FFF', padding: 20, borderRadius: 10 },
-  modalHeader: { fontSize: 18, fontWeight: 'bold', marginBottom: 15, textAlign: 'center' },
+  modalHeader: { fontSize: 18, fontWeight: 'bold', marginBottom: 15, textAlign: 'center', color:'#282727ff' },
   input: { borderWidth: 1, borderColor: '#DDD', padding: 10, borderRadius: 8, marginBottom: 10, backgroundColor: '#F9F9F9', color: '#000' },
-  rowBtn: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 },
-  btnCancel: { padding: 10 },
+  rowBtn: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 10, color:"#000" },
+  btnCancel: { padding: 10, color: "#000" },
   btnSave: { backgroundColor: '#2196F3', padding: 10, borderRadius: 5, paddingHorizontal: 20 }
 });
