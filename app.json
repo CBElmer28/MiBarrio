@@ -13,7 +13,10 @@
       "backgroundColor": "#ffffff"
     },
     "updates": {
-      "url": "https://u.expo.dev/a441c0e1-8ed7-4675-95c5-71209314e12f"
+      "url": "https://u.expo.dev/a441c0e1-8ed7-4675-95c5-71209314e12f",
+      "enabled": true,
+      "checkAutomatically": "ON_LOAD",
+      "fallbackToCacheTimeout": 15000
     },
     "runtimeVersion": {
       "policy": "appVersion"
