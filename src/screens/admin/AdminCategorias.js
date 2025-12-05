@@ -90,8 +90,9 @@ export default function AdminCategorias({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
+        {/* CAMBIO: Icono negro explícito */}
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color="#333"/>
+          <Ionicons name="arrow-back" size={24} color="#000"/>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Gestión de Categorías</Text>
         <View style={{width:24}}/>
@@ -103,7 +104,8 @@ export default function AdminCategorias({ navigation }) {
             keyExtractor={i => i.id.toString()} 
             renderItem={renderItem}
             contentContainerStyle={{padding: 20}}
-            ListEmptyComponent={<Text style={{textAlign:'center', color:'#999'}}>No hay categorías.</Text>}
+            // CAMBIO: Texto "No hay categorías" en negro
+            ListEmptyComponent={<Text style={{textAlign:'center', color:'#000'}}>No hay categorías.</Text>}
         />
       )}
 
@@ -116,16 +118,19 @@ export default function AdminCategorias({ navigation }) {
             <View style={styles.modalContent}>
                 <Text style={styles.modalHeader}>{esEdicion ? "Editar Categoría" : "Nueva Categoría"}</Text>
                 
+                {/* CAMBIO: Placeholder oscuro */}
                 <TextInput 
                     style={styles.input} 
                     placeholder="Nombre (Ej: Pizza, Postres)" 
+                    placeholderTextColor="#555"
                     value={nombre} 
                     onChangeText={setNombre} 
                 />
                 
                 <View style={styles.rowBtn}>
                     <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.btnCancel}>
-                        <Text style={{color:'#555'}}>Cancelar</Text>
+                        {/* CAMBIO: Texto negro explícito */}
+                        <Text style={{color:'#000', fontWeight: 'bold'}}>Cancelar</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={handleGuardar} style={styles.btnSave}>
                         <Text style={{color:'#FFF', fontWeight:'bold'}}>Guardar</Text>
@@ -141,16 +146,21 @@ export default function AdminCategorias({ navigation }) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#F5F5F5', paddingTop: 40 },
   header: { flexDirection: 'row', justifyContent:'space-between', paddingHorizontal: 20, alignItems: 'center', marginBottom: 10 },
-  headerTitle: { fontSize: 20, fontWeight: 'bold', color: '#333' },
+  // CAMBIO: Color #000
+  headerTitle: { fontSize: 20, fontWeight: 'bold', color: '#000' },
   card: { backgroundColor: '#FFF', padding: 15, borderRadius: 12, marginBottom: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', elevation: 2 },
   info: { flex: 1 },
-  title: { fontSize: 16, fontWeight: 'bold', color: '#333' },
+  // CAMBIO: Color #000
+  title: { fontSize: 16, fontWeight: 'bold', color: '#000' },
   fab: { position: 'absolute', bottom: 30, right: 20, width: 60, height: 60, borderRadius: 30, backgroundColor: '#4CAF50', justifyContent: 'center', alignItems: 'center', elevation: 5 },
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', padding: 20 },
   modalContent: { backgroundColor: '#FFF', padding: 25, borderRadius: 15, elevation: 5 },
-  modalHeader: { fontSize: 18, fontWeight: 'bold', marginBottom: 20, textAlign: 'center' },
-  input: { borderWidth: 1, borderColor: '#DDD', padding: 12, borderRadius: 8, marginBottom: 20, backgroundColor: '#F9F9F9', fontSize: 16 },
+  // CAMBIO: Color #000
+  modalHeader: { fontSize: 18, fontWeight: 'bold', marginBottom: 20, textAlign: 'center', color: '#000' },
+  // CAMBIO: Color texto input #000
+  input: { borderWidth: 1, borderColor: '#DDD', padding: 12, borderRadius: 8, marginBottom: 20, backgroundColor: '#FFF', fontSize: 16, color: '#000' },
   rowBtn: { flexDirection: 'row', justifyContent: 'space-between', gap: 15 },
-  btnCancel: { flex: 1, padding: 15, alignItems:'center', backgroundColor:'#EEE', borderRadius: 8 },
+  // CAMBIO: Fondo gris un poco más oscuro
+  btnCancel: { flex: 1, padding: 15, alignItems:'center', backgroundColor:'#DDD', borderRadius: 8 },
   btnSave: { flex: 1, backgroundColor: '#4CAF50', padding: 15, borderRadius: 8, alignItems:'center' }
 });
