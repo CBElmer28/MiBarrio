@@ -32,4 +32,6 @@ jobs:
         env:
           API_URL: ${{ secrets.API_URL }}
           GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
-        run: eas update --branch production --message "Update from GitHub Actions" --platform android --platform ios
+        run: |
+          eas update --branch production --message "Update from GitHub Actions (Android)" --platform android
+          eas update --branch production --message "Update from GitHub Actions (iOS)" --platform ios
